@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
 		CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CAEBBA2F2AE74B2B00ABE21B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */; };
 		CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */; };
@@ -34,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA6BBC702AE8554000CB99EC /* TabUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabUIView.swift; sourceTree = "<group>"; };
 		CAEBBA292AE74B2B00ABE21B /* Music Stats iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Stats iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_Stats_iOSApp.swift; sourceTree = "<group>"; };
 		CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -71,6 +73,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA6BBC6F2AE8552B00CB99EC /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				CA6BBC702AE8554000CB99EC /* TabUIView.swift */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
 		CAEBBA202AE74B2B00ABE21B = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +104,7 @@
 		CAEBBA2B2AE74B2B00ABE21B /* Music Stats iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA6BBC6F2AE8552B00CB99EC /* Tabs */,
 				CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */,
 				CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */,
 				CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */,
@@ -259,6 +270,7 @@
 			files = (
 				CAEBBA2F2AE74B2B00ABE21B /* ContentView.swift in Sources */,
 				CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */,
+				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

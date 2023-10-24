@@ -12,7 +12,7 @@ let SPOTIFY_API_CLIENT_SECRET = "fe3b975ee9b4499f9d72a9bddd5b3c86"
 
 
 func isLoggedIn() -> Bool {
-    let token = UserDefaults.standard.object(forKey: "accessToken") as? String
+    let token = UserDefaults.standard.object(forKey: "access_token") as? String
     if token == nil {
         return false
     }
@@ -44,25 +44,23 @@ struct Music_Stats_iOSApp: App {
                 let data = data,
                 let response = response as? HTTPURLResponse,
                 error == nil
-            else {                                                               // check for fundamental networking error
+            else {
                 print("error", error ?? URLError(.badServerResponse))
                 return
             }
             
-            guard (200 ... 299) ~= response.statusCode else {                    // check for http errors
+            guard (200 ... 299) ~= response.statusCode else {
                 print("statusCode should be 2xx, but is \(response.statusCode)")
                 print("response = \(response)")
                 return
             }
-            
-            // do whatever you want with the `data`, e.g.:
-            
             do {
                 let responseObject = try JSONDecoder().decode([String:String].self, from: data)
+                UserDefaults.standard.set(responseObject["access_token"], forKey:"access_token")
+                UserDefaults.standard.set(responseObject["token_type"], forKey:"token_type")
                 print(responseObject)
             } catch {
                 print(error) // parsing error
-                
                 if let responseString = String(data: data, encoding: .utf8) {
                     print("responseString = \(responseString)")
                 } else {
