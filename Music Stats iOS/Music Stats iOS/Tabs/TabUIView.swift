@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TabUIView: View {
-    @Binding var isLoggedIn: Bool = true
     var body: some View {
         TabView {
             
