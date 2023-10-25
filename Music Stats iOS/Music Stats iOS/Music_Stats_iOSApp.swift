@@ -92,7 +92,7 @@ class UserTopItems: ObservableObject {
         
     }
     
-    func getSongsForTimeRange(range: String, offset: Int) {
+    func getSongsForTimeRange(range: String, offset: Int) -> TopSongsResponse {
         let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=" + range + "&limit=50&offset=" + String(offset)
         let authorizationAccessTokenStr = UserDefaults.standard.object(forKey: "access_token") as! String
         let authorizationTokenTypeStr = UserDefaults.standard.object(forKey: "token_type") as! String
@@ -117,8 +117,7 @@ class UserTopItems: ObservableObject {
                 return
             }
             do {
-                let responseObject = try JSONDecoder().decode(TopSongsResponse.self, from: data)
-                print(responseObject)
+                let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data) as TopSongsResponse
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -128,6 +127,7 @@ class UserTopItems: ObservableObject {
                 }
             }
         }.resume()
+
     }
 
 
