@@ -36,9 +36,19 @@ struct SongResponse: Codable {
 }
 
 struct ArtistResponse: Codable {
-    
+    var images: [ImageResponse]
+    var name: String
+    var popularity: Int
 }
 
 struct AlbumResponse: Codable {
-    
+    var images: [ImageResponse]
+    var name: String
+    var release_date: String
+}
+
+struct ImageResponse: Codable {
+    var url: String
+    var height: Int?
+    var width: Int?
 }

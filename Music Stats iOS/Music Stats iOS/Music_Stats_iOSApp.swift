@@ -79,8 +79,6 @@ struct Music_Stats_iOSApp: App {
     }
 }
 
-
-
 class UserTopItems: ObservableObject {
     @Published var topSongs: [Int : AnyObject]
     @Published var topArtists: [Int : AnyObject]
