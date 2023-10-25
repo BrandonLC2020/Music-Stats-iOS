@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SongCard: View {
-    @ObservedObject var song: 
+    //@ObservedObject var song:
     
     var body: some View {
         ZStack {

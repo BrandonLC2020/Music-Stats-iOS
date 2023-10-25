@@ -79,15 +79,7 @@ struct Music_Stats_iOSApp: App {
     }
 }
 
-struct TopSongsResponse: Codable {
-    var href: String
-    var limit: Int
-    var next: String?
-    var offset: Int
-    var previous: String?
-    var total: Int
-    
-}
+
 
 class UserTopItems: ObservableObject {
     @Published var topSongs: [Int : AnyObject]
