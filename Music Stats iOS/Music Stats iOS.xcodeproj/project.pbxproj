@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
+		CA9CC0E02AE9CC0000868478 /* TopSongs.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0DF2AE9CC0000868478 /* TopSongs.swift */; };
+		CA9CC0E42AE9CD0A00868478 /* TopArtists.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0E32AE9CD0A00868478 /* TopArtists.swift */; };
+		CA9CC0E62AE9CDE100868478 /* SongCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0E52AE9CDE100868478 /* SongCard.swift */; };
 		CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CAEBBA2F2AE74B2B00ABE21B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */; };
 		CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */; };
@@ -36,6 +39,9 @@
 
 /* Begin PBXFileReference section */
 		CA6BBC702AE8554000CB99EC /* TabUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabUIView.swift; sourceTree = "<group>"; };
+		CA9CC0DF2AE9CC0000868478 /* TopSongs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopSongs.swift; sourceTree = "<group>"; };
+		CA9CC0E32AE9CD0A00868478 /* TopArtists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopArtists.swift; sourceTree = "<group>"; };
+		CA9CC0E52AE9CDE100868478 /* SongCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongCard.swift; sourceTree = "<group>"; };
 		CAEBBA292AE74B2B00ABE21B /* Music Stats iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music Stats iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_Stats_iOSApp.swift; sourceTree = "<group>"; };
 		CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -81,6 +87,23 @@
 			path = Tabs;
 			sourceTree = "<group>";
 		};
+		CA9CC0DE2AE9CBED00868478 /* Top Songs */ = {
+			isa = PBXGroup;
+			children = (
+				CA9CC0DF2AE9CC0000868478 /* TopSongs.swift */,
+				CA9CC0E52AE9CDE100868478 /* SongCard.swift */,
+			);
+			path = "Top Songs";
+			sourceTree = "<group>";
+		};
+		CA9CC0E12AE9CCEF00868478 /* Top Artists */ = {
+			isa = PBXGroup;
+			children = (
+				CA9CC0E32AE9CD0A00868478 /* TopArtists.swift */,
+			);
+			path = "Top Artists";
+			sourceTree = "<group>";
+		};
 		CAEBBA202AE74B2B00ABE21B = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +127,8 @@
 		CAEBBA2B2AE74B2B00ABE21B /* Music Stats iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA9CC0E12AE9CCEF00868478 /* Top Artists */,
+				CA9CC0DE2AE9CBED00868478 /* Top Songs */,
 				CA6BBC6F2AE8552B00CB99EC /* Tabs */,
 				CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */,
 				CAEBBA2E2AE74B2B00ABE21B /* ContentView.swift */,
@@ -268,9 +293,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA9CC0E62AE9CDE100868478 /* SongCard.swift in Sources */,
 				CAEBBA2F2AE74B2B00ABE21B /* ContentView.swift in Sources */,
 				CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */,
+				CA9CC0E02AE9CC0000868478 /* TopSongs.swift in Sources */,
 				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,
+				CA9CC0E42AE9CD0A00868478 /* TopArtists.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
