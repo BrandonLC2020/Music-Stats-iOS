@@ -80,8 +80,8 @@ struct Music_Stats_iOSApp: App {
 }
 
 class UserTopItems: ObservableObject {
-    @Published var topSongs: [Int : AnyObject]
-    @Published var topArtists: [Int : AnyObject]
+    @Published var topSongs: [String : [SongResponse]]
+    @Published var topArtists: [String : [ArtistResponse]]
     
     init() {
         self.topSongs = [:]
@@ -89,14 +89,45 @@ class UserTopItems: ObservableObject {
     }
     
     func getTopSongs() {
+        var first50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 0)
+        var next50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 50)
         
+        var first50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 0)
+        var next50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 50)
+        
+        var first50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 0)
+        var next50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 50)
+        
+        var top100SongsShortTerm = first50SongsResponseShortTerm.items + next50SongsResponseShortTerm.items
+        var top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
+        var top100SongsLongTerm = first50SongsResponseLongTerm.items + next50SongsResponseLongTerm.items
+        
+        self.topSongs = ["short" : top100SongsShortTerm, "medium" : top100SongsMediumTerm, "long" : top100SongsLongTerm]
+    }
+    
+    func getTopArtists() {
+        var first50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 0)
+        var next50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 50)
+        
+        var first50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 0)
+        var next50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 50)
+        
+        var first50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 0)
+        var next50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 50)
+        
+        var top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items + next50ArtistsResponseShortTerm.items
+        var top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items + next50ArtistsResponseMediumTerm.items
+        var top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items + next50ArtistsResponseLongTerm.items
+        
+        self.topArtists = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
     }
     
     func getSongsForTimeRange(range: String, offset: Int) -> TopSongsResponse {
+        var result: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+
         let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=" + range + "&limit=50&offset=" + String(offset)
         let authorizationAccessTokenStr = UserDefaults.standard.object(forKey: "access_token") as! String
         let authorizationTokenTypeStr = UserDefaults.standard.object(forKey: "token_type") as! String
-
         let requestHeaders: [String:String] = ["Authorization" : authorizationTokenTypeStr + " " + authorizationAccessTokenStr]
         var request = URLRequest(url: URL(string: urlStr)!)
         request.httpMethod = "GET"
@@ -117,7 +148,8 @@ class UserTopItems: ObservableObject {
                 return
             }
             do {
-                let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data) as TopSongsResponse
+                let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
+                result = responseObject
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -127,7 +159,47 @@ class UserTopItems: ObservableObject {
                 }
             }
         }.resume()
-
+        return result
+    }
+    
+    func getArtistsForTimeRange(range: String, offset: Int) -> TopArtistsResponse {
+        var result: TopArtistsResponse = TopArtistsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        
+        let urlStr = "https://api.spotify.com/v1/me/top/artists?time_range=" + range + "&limit=50&offset=" + String(offset)
+        let authorizationAccessTokenStr = UserDefaults.standard.object(forKey: "access_token") as! String
+        let authorizationTokenTypeStr = UserDefaults.standard.object(forKey: "token_type") as! String
+        let requestHeaders: [String:String] = ["Authorization" : authorizationTokenTypeStr + " " + authorizationAccessTokenStr]
+        var request = URLRequest(url: URL(string: urlStr)!)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = requestHeaders
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard
+                let data = data,
+                let response = response as? HTTPURLResponse,
+                error == nil
+            else {
+                print("error", error ?? URLError(.badServerResponse))
+                return
+            }
+            
+            guard (200 ... 299) ~= response.statusCode else {
+                print("statusCode should be 2xx, but is \(response.statusCode)")
+                print("response = \(response)")
+                return
+            }
+            do {
+                let responseObject: TopArtistsResponse = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
+                result = responseObject
+            } catch {
+                print(error) // parsing error
+                if let responseString = String(data: data, encoding: .utf8) {
+                    print("responseString = \(responseString)")
+                } else {
+                    print("unable to parse response as string")
+                }
+            }
+        }.resume()
+        return result
     }
 
 
