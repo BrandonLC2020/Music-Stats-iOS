@@ -32,13 +32,13 @@ struct SongResponse: Codable {
     var duration_ms: Int //in milliseconds
     var name: String
     var popularity: Int
-    
 }
 
 struct ArtistResponse: Codable {
-    var images: [ImageResponse]
+    var images: [ImageResponse]?
     var name: String
-    var popularity: Int
+    var popularity: Int?
+    var id: String
 }
 
 struct AlbumResponse: Codable {

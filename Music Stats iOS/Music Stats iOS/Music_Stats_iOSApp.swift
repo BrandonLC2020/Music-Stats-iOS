@@ -70,8 +70,6 @@ struct Music_Stats_iOSApp: App {
         }.resume()
     }
     
-    
-    
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -86,38 +84,42 @@ class UserTopItems: ObservableObject {
     init() {
         self.topSongs = [:]
         self.topArtists = [:]
+        if isLoggedIn() {
+            getTopSongs()
+            getTopArtists()
+        }
     }
     
     func getTopSongs() {
-        var first50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 0)
-        var next50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 50)
+        let first50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 0)
+        let next50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 50)
         
-        var first50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 0)
-        var next50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 50)
+        let first50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 0)
+        let next50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 50)
         
-        var first50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 0)
-        var next50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 50)
+        let first50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 0)
+        let next50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 50)
         
-        var top100SongsShortTerm = first50SongsResponseShortTerm.items + next50SongsResponseShortTerm.items
-        var top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
-        var top100SongsLongTerm = first50SongsResponseLongTerm.items + next50SongsResponseLongTerm.items
+        let top100SongsShortTerm = first50SongsResponseShortTerm.items + next50SongsResponseShortTerm.items
+        let top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
+        let top100SongsLongTerm = first50SongsResponseLongTerm.items + next50SongsResponseLongTerm.items
         
         self.topSongs = ["short" : top100SongsShortTerm, "medium" : top100SongsMediumTerm, "long" : top100SongsLongTerm]
     }
     
     func getTopArtists() {
-        var first50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 0)
-        var next50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 50)
+        let first50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 0)
+        let next50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 50)
         
-        var first50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 0)
-        var next50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 50)
+        let first50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 0)
+        let next50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 50)
         
-        var first50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 0)
-        var next50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 50)
+        let first50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 0)
+        let next50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 50)
         
-        var top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items + next50ArtistsResponseShortTerm.items
-        var top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items + next50ArtistsResponseMediumTerm.items
-        var top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items + next50ArtistsResponseLongTerm.items
+        let top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items + next50ArtistsResponseShortTerm.items
+        let top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items + next50ArtistsResponseMediumTerm.items
+        let top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items + next50ArtistsResponseLongTerm.items
         
         self.topArtists = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
     }
