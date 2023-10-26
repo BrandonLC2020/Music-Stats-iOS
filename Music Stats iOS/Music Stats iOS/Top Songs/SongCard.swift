@@ -20,14 +20,25 @@ struct SongCard: View {
         return String(truncated)
     }
     
+//    func chooseAlbumCover(covers: [ImageResponse]) -> String {
+//        
+//    }
+    
     var body: some View {
         ZStack {
             HStack {
                 //album cover
+                AsyncImage(url: URL(string: song.album.images[0].url)) { image in
+                    image
+                        .resizable()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 50, height: 50)
                 
                 //song title
                 VStack{
-                    Text(song.name)
+                    Text(song.name).bold()
                     Text(artistsToStr())
                 }
                 
