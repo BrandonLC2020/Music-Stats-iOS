@@ -9,9 +9,29 @@ import SwiftUI
 
 struct SongCard: View {
     var song: SongResponse
+    
+    func artistsToStr() -> String {
+        var result : String = ""
+        for artist in song.artists {
+            result += artist.name + ", "
+        }
+        let endIndex = result.index(result.endIndex, offsetBy: -2)
+        let truncated = result[..<endIndex]
+        return String(truncated)
+    }
+    
     var body: some View {
         ZStack {
-            
+            HStack {
+                //album cover
+                
+                //song title
+                VStack{
+                    Text(song.name)
+                    Text(artistsToStr())
+                }
+                
+            }
         }
     }
 }
