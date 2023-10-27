@@ -72,21 +72,24 @@ struct Music_Stats_iOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            
         }
     }
 }
 
 class UserTopItems: ObservableObject {
-    @Published var topSongs: [String : [SongResponse]]
-    @Published var topArtists: [String : [ArtistResponse]]
+    @Published var topSongsResponse: [String : [SongResponse]]
+    @Published var topArtistsResponse: [String : [ArtistResponse]]
+    @Published var topSongsList: [String : [Song]]
     
     init() {
-        self.topSongs = [:]
-        self.topArtists = [:]
+        self.topSongsResponse = [:]
+        self.topArtistsResponse = [:]
+        self.topSongsList = [:]
         if isLoggedIn() {
             getTopSongs()
             getTopArtists()
+            
         }
     }
     
@@ -104,7 +107,33 @@ class UserTopItems: ObservableObject {
         let top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
         let top100SongsLongTerm = first50SongsResponseLongTerm.items + next50SongsResponseLongTerm.items
         
-        self.topSongs = ["short" : top100SongsShortTerm, "medium" : top100SongsMediumTerm, "long" : top100SongsLongTerm]
+        self.topSongsResponse = ["short" : top100SongsShortTerm, "medium" : top100SongsMediumTerm, "long" : top100SongsLongTerm]
+        
+        self.topSongsList["short"] = []
+        for i in 0...self.topSongsResponse["short"]!.endIndex {
+            let album: Album = Album(images: self.topSongsResponse["short"]![i].album.images, name: self.topSongsResponse["short"]![i].album.name, release_date: self.topSongsResponse["short"]![i].album.release_date)
+            var artist: [Artist] = []
+            for art in self.topSongsResponse["short"]![i].artists {
+                artist.append(Artist(name: art.name, artistId: art.id))
+            }
+            self.topSongsList["short"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["short"]![i].duration_ms, name: self.topSongsResponse["short"]![i].name, popularity: self.topSongsResponse["short"]![i].popularity))
+        }
+        for i in 0...self.topSongsResponse["medium"]!.endIndex {
+            let album: Album = Album(images: self.topSongsResponse["medium"]![i].album.images, name: self.topSongsResponse["medium"]![i].album.name, release_date: self.topSongsResponse["medium"]![i].album.release_date)
+            var artist: [Artist] = []
+            for art in self.topSongsResponse["medium"]![i].artists {
+                artist.append(Artist(name: art.name, artistId: art.id))
+            }
+            self.topSongsList["medium"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["medium"]![i].duration_ms, name: self.topSongsResponse["medium"]![i].name, popularity: self.topSongsResponse["medium"]![i].popularity))
+        }
+        for i in 0...self.topSongsResponse["long"]!.endIndex {
+            let album: Album = Album(images: self.topSongsResponse["long"]![i].album.images, name: self.topSongsResponse["long"]![i].album.name, release_date: self.topSongsResponse["long"]![i].album.release_date)
+            var artist: [Artist] = []
+            for art in self.topSongsResponse["long"]![i].artists {
+                artist.append(Artist(name: art.name, artistId: art.id))
+            }
+            self.topSongsList["long"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["long"]![i].duration_ms, name: self.topSongsResponse["long"]![i].name, popularity: self.topSongsResponse["long"]![i].popularity))
+        }
     }
     
     func getTopArtists() {
@@ -121,7 +150,7 @@ class UserTopItems: ObservableObject {
         let top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items + next50ArtistsResponseMediumTerm.items
         let top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items + next50ArtistsResponseLongTerm.items
         
-        self.topArtists = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
+        self.topArtistsResponse = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
     }
     
     func getSongsForTimeRange(range: String, offset: Int) -> TopSongsResponse {

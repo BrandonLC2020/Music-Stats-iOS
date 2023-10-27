@@ -7,16 +7,22 @@
 
 import SwiftUI
 
-struct TopSongs: View {
+struct TopSongsView: View {
+    var topSongs: [Song]
+    
     var body: some View {
         NavigationView {
             ZStack {
-                
+                ScrollView {
+                    VStack {
+                        
+                    }
+                }
             }
         }
     }
 }
 
 #Preview {
-    TopSongs()
+    TopSongsView()
 }

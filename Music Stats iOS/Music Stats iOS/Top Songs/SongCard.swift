@@ -26,21 +26,26 @@ struct SongCard: View {
     
     var body: some View {
         ZStack {
+            RoundedRectangle(cornerRadius: 15.0)
+                .foregroundColor(.gray)
+                .padding(.all)
             HStack {
                 //album cover
                 AsyncImage(url: URL(string: song.album.images[0].url)) { image in
-                    image
-                        .resizable()
+                    image.resizable()
                 } placeholder: {
                     ProgressView()
                 }
-                .frame(width: 50, height: 50)
+                .frame(width: 64, height: 64)
+                .cornerRadius(15.0)
+                .padding(.all)
                 
                 //song title
                 VStack{
-                    Text(song.name).bold()
+                    Text(song.name)
+                        .bold()
                     Text(artistsToStr())
-                }
+                }.padding(.all)
                 
             }
         }
