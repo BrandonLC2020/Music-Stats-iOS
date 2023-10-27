@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TopSongs: Identifiable {
+struct TopSongs: Identifiable, Hashable {
     let id = UUID()
     var href: String
     var limit: Int
@@ -18,7 +18,7 @@ struct TopSongs: Identifiable {
     var items: [Song]
 }
 
-struct TopArtists: Identifiable {
+struct TopArtists: Identifiable, Hashable {
     let id = UUID()
     var href: String
     var limit: Int
@@ -30,7 +30,7 @@ struct TopArtists: Identifiable {
 }
     
 
-struct Song: Identifiable {
+struct Song: Identifiable, Hashable {
     let id = UUID()
     var rank: Int?
     var album: Album
@@ -40,7 +40,7 @@ struct Song: Identifiable {
     var popularity: Int
 }
 
-struct Artist: Identifiable {
+struct Artist: Identifiable, Hashable {
     let id = UUID()
     var rank: Int?
     var images: [ImageResponse]?
@@ -49,7 +49,7 @@ struct Artist: Identifiable {
     var artistId: String
 }
 
-struct Album: Identifiable {
+struct Album: Identifiable, Hashable {
     let id = UUID()
     var images: [ImageResponse]
     var name: String
