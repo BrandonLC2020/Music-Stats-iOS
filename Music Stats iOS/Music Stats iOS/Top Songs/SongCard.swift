@@ -20,48 +20,52 @@ struct SongCard: View {
         return String(truncated)
     }
     
-//    func chooseAlbumCover(covers: [ImageResponse]) -> String {
-//        
-//    }
-    
     var body: some View {
-        ZStack {
-            AsyncImage(url: URL(string: song.album.images[0].url)) { image in
-                image.resizable()
-            } placeholder: {
-                ProgressView()
-            }
-            .padding(.all)
-            .cornerRadius(15.0)
-            RoundedRectangle(cornerRadius: 15.0)
-                .foregroundColor(.gray.opacity(0.5))
-                .padding(.all)
-            HStack {
-                //rank
-                Text(String(song.rank ?? Int()))
-                    .padding(.leading)
-                //album cover
-                AsyncImage(url: URL(string: song.album.images[0].url)) { image in
-                    image.resizable()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 64, height: 64)
-                .cornerRadius(15.0)
-                .padding(.all)
-                
-                //song title
-                VStack(alignment: .leading) {
-                    Text(song.name)
+        GeometryReader { geometry in
+            ZStack {
+                HStack {
+                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .cornerRadius(15.0)
+                    .blur(radius: 4.2)
+                    .scaledToFill()
+                    .frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
+                    .clipped()
+                }.cornerRadius(15.0)
+                RoundedRectangle(cornerRadius: 15.0)
+                    .foregroundColor(.gray.opacity(0.7))
+                    .frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
+                HStack {
+                    //rank
+                    Text(String(song.rank ?? Int()))
                         .bold()
-                        .lineLimit(1)
-                    Text(artistsToStr())
-                        .lineLimit(1)
-                }
-                .padding(.trailing)
-                Spacer()
-                
-            }.padding(.all)
+                        .frame(width:geometry.size.width/40, height:geometry.size.width/40)
+                        .padding(.leading)
+                    //album cover
+                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: geometry.size.width/6.0, height: geometry.size.width/6.0)
+                    .cornerRadius(15.0)
+                    .padding(.all)
+                    
+                    //song title
+                    VStack(alignment: .leading) {
+                        Text(song.name)
+                            .bold()
+                            .lineLimit(1)
+                        Text(artistsToStr())
+                            .lineLimit(1)
+                    }
+                    .padding(.trailing)
+                    Spacer()
+                }.padding(.all)
+            }
         }
     }
 }

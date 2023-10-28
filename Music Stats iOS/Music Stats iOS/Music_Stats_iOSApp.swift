@@ -6,26 +6,29 @@
 //
 
 import SwiftUI
+import Foundation
 
 let SPOTIFY_API_CLIENT_ID = "3c71d3fa96a74c1999184c5690f507d9"
 let SPOTIFY_API_CLIENT_SECRET = "fe3b975ee9b4499f9d72a9bddd5b3c86"
 
-
-func isLoggedIn() -> Bool {
-    let token = UserDefaults.standard.object(forKey: "access_token") as? String
-    if token == nil {
-        return false
-    }
-    return true
+struct AuthorizationResponse: Decodable {
+    let access_token: String
+    let token_type: String
+    let expires_in: Int
 }
 
 @main
 struct Music_Stats_iOSApp: App {
     
-    @State var authenticated: Bool = isLoggedIn()
+    var userTopItems : UserTopItems = UserTopItems()
+    var accessToken : String
+    var tokenType : String
     
     init() {
+        self.accessToken = ""
+        self.tokenType = ""
         refreshAccessAndRefreshTokens()
+        self.userTopItems = UserTopItems(access: self.accessToken, token: self.tokenType)
     }
     
     func refreshAccessAndRefreshTokens() {
@@ -37,9 +40,13 @@ struct Music_Stats_iOSApp: App {
         var request = URLRequest(url: URL(string: "https://accounts.spotify.com/api/token")!)
         request.httpMethod = "POST"
         request.allHTTPHeaderFields = requestHeaders
+        //request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        //let bodyParams = "grant_type=client_credentials&client_id=\(SPOTIFY_API_CLIENT_ID)&client_secret=\(SPOTIFY_API_CLIENT_SECRET)"
+        //request.httpBody = bodyParams.data(using: String.Encoding.ascii, allowLossyConversion: true)
+//        var access_token:String = ""
+//        var token_type:String = ""
         request.httpBody = requestBodyComponents.query?.data(using: .utf8)
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             guard
                 let data = data,
                 let response = response as? HTTPURLResponse,
@@ -55,10 +62,11 @@ struct Music_Stats_iOSApp: App {
                 return
             }
             do {
+                print(String(data: data, encoding: String.Encoding.utf8)!)
                 let responseObject = try JSONDecoder().decode([String:String].self, from: data)
-                UserDefaults.standard.set(responseObject["access_token"], forKey:"access_token")
-                UserDefaults.standard.set(responseObject["token_type"], forKey:"token_type")
                 print(responseObject)
+//                access_token = responseObject.access_token
+//                token_type = responseObject.token_type
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -68,10 +76,16 @@ struct Music_Stats_iOSApp: App {
                 }
             }
         }.resume()
+        //print("access token is \(access_token)")
+//        self.accessToken = access_token
+//        self.tokenType = token_type
     }
     
     var body: some Scene {
         WindowGroup {
+            ZStack{
+                TabUIView(topSongs: userTopItems.topSongsList)
+            }
             
         }
     }
@@ -82,16 +96,29 @@ class UserTopItems: ObservableObject {
     @Published var topArtistsResponse: [String : [ArtistResponse]]
     @Published var topSongsList: [String : [Song]]
     @Published var topArtistsList: [String : [Artist]]
+    var accessToken: String
+    var tokenType: String
     
     init() {
         self.topSongsResponse = [:]
         self.topArtistsResponse = [:]
         self.topSongsList = [:]
         self.topArtistsList = [:]
-        if isLoggedIn() {
-            getTopSongs()
-            getTopArtists()
-        }
+        self.accessToken = ""
+        self.tokenType = ""
+    }
+    
+    init(access: String, token: String) {
+        self.topSongsResponse = [:]
+        self.topArtistsResponse = [:]
+        self.topSongsList = [:]
+        self.topArtistsList = [:]
+        self.accessToken = access
+        self.tokenType = token
+        getTopSongs()
+        getTopArtists()
+        
+        print(topSongsList)
     }
     
     func getTopSongs() {
@@ -172,10 +199,11 @@ class UserTopItems: ObservableObject {
     func getSongsForTimeRange(range: String, offset: Int) -> TopSongsResponse {
         var result: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
 
-        let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=" + range + "&limit=50&offset=" + String(offset)
-        let authorizationAccessTokenStr = UserDefaults.standard.object(forKey: "access_token") as! String
-        let authorizationTokenTypeStr = UserDefaults.standard.object(forKey: "token_type") as! String
-        let requestHeaders: [String:String] = ["Authorization" : authorizationTokenTypeStr + " " + authorizationAccessTokenStr]
+        let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=\(range)&limit=50&offset=\(String(offset))"
+        let authorizationAccessTokenStr = accessToken
+        let authorizationTokenTypeStr = tokenType
+        let requestHeaders: [String:String] = ["Authorization" : "\(authorizationTokenTypeStr) \(authorizationAccessTokenStr)"]
+        //print(requestHeaders)
         var request = URLRequest(url: URL(string: urlStr)!)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
@@ -195,7 +223,9 @@ class UserTopItems: ObservableObject {
                 return
             }
             do {
+                //print(data)
                 let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
+                //print(responseObject)
                 result = responseObject
             } catch {
                 print(error) // parsing error
@@ -206,6 +236,7 @@ class UserTopItems: ObservableObject {
                 }
             }
         }.resume()
+        //print(result)
         return result
     }
     
@@ -246,9 +277,9 @@ class UserTopItems: ObservableObject {
                 }
             }
         }.resume()
+        print(result)
         return result
     }
-
-
     
 }
+

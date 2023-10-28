@@ -6,13 +6,13 @@
 //
 
 struct TopSongsResponse: Codable, Hashable {
-    let href: String
-    let limit: Int
-    //let next: String?
-    let offset: Int
-    //let previous: String?
-    let total: Int
-    let items: [SongResponse]
+    var href: String
+    var limit: Int
+    var next: String?
+    var offset: Int
+    var previous: String?
+    var total: Int
+    var items: [SongResponse]
 }
 
 struct TopArtistsResponse: Codable, Hashable {
