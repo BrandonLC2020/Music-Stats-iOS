@@ -18,7 +18,7 @@ struct TopSongsView: View {
                     VStack {
                         //Text("Top Songs").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                         ScrollView {
-                            Picker(selection: $selection, label: Text("Time Perio")) {
+                            Picker(selection: $selection, label: Text("Time Period")) {
                                                         Text("Short Term").tag(0)
                                                         Text("Medium Term").tag(1)
                                                         Text("Long Term").tag(2)
