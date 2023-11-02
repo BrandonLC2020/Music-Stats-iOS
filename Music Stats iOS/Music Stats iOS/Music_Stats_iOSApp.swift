@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Foundation
+import CryptoKit
+import WebKit
 
 let SPOTIFY_API_CLIENT_ID = "3c71d3fa96a74c1999184c5690f507d9"
 let SPOTIFY_API_CLIENT_SECRET = "fe3b975ee9b4499f9d72a9bddd5b3c86"
@@ -17,8 +19,26 @@ struct AuthorizationResponse: Decodable {
     let expires_in: Int
 }
 
+func generateRandomString(length: Int) -> String {
+    // each hexadecimal character represents 4 bits, so we need 2 hex characters per byte
+    let byteCount = length / 2
+    
+    var bytes = [UInt8](repeating: 0, count: byteCount)
+    let result = SecRandomCopyBytes(kSecRandomDefault, byteCount, &bytes)
+    guard result == errSecSuccess else {
+        fatalError("Failed to generate random bytes: \(result)")
+    }
+    
+    // convert to hex string
+    let hexString = bytes.map { String(format: "%02x", $0) }.joined()
+    let paddedHexString = hexString.padding(toLength: length, withPad: "0", startingAt: 0)
+    return paddedHexString
+}
+
+
 @main
 struct Music_Stats_iOSApp: App {
+    
     
     var userTopItems : UserTopItems = UserTopItems()
     var accessToken : String
@@ -31,62 +51,49 @@ struct Music_Stats_iOSApp: App {
         self.userTopItems = UserTopItems(access: self.accessToken, token: self.tokenType)
     }
     
-    func refreshAccessAndRefreshTokens() {
-        let requestHeaders: [String:String] = ["Content-Type" : "application/x-www-form-urlencoded"]
-        var requestBodyComponents = URLComponents()
-        requestBodyComponents.queryItems = [URLQueryItem(name: "grant-type", value: "client_credentials"),
-                                            URLQueryItem(name: "client_id", value: SPOTIFY_API_CLIENT_ID),
-                                            URLQueryItem(name: "client_secret", value: SPOTIFY_API_CLIENT_SECRET)]
-        var request = URLRequest(url: URL(string: "https://accounts.spotify.com/api/token")!)
-        request.httpMethod = "POST"
-        request.allHTTPHeaderFields = requestHeaders
-        //request.addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        //let bodyParams = "grant_type=client_credentials&client_id=\(SPOTIFY_API_CLIENT_ID)&client_secret=\(SPOTIFY_API_CLIENT_SECRET)"
-        //request.httpBody = bodyParams.data(using: String.Encoding.ascii, allowLossyConversion: true)
-//        var access_token:String = ""
-//        var token_type:String = ""
-        request.httpBody = requestBodyComponents.query?.data(using: .utf8)
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            guard
-                let data = data,
-                let response = response as? HTTPURLResponse,
-                error == nil
-            else {
-                print("error", error ?? URLError(.badServerResponse))
-                return
-            }
-            
-            guard (200 ... 299) ~= response.statusCode else {
-                print("statusCode should be 2xx, but is \(response.statusCode)")
-                print("response = \(response)")
-                return
-            }
-            do {
-                print(String(data: data, encoding: String.Encoding.utf8)!)
-                let responseObject = try JSONDecoder().decode([String:String].self, from: data)
-                print(responseObject)
-//                access_token = responseObject.access_token
-//                token_type = responseObject.token_type
-            } catch {
-                print(error) // parsing error
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("responseString = \(responseString)")
-                } else {
-                    print("unable to parse response as string")
-                }
-            }
-        }.resume()
-        //print("access token is \(access_token)")
-//        self.accessToken = access_token
-//        self.tokenType = token_type
+    func refreshAccessAndRefreshTokens() -> String {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "accounts.spotify.com"
+        components.path = "/authorize"
+
+        let state = generateRandomString(length: 16)
+        let scope = "user-read-private user-read-email"
+        let clientId = SPOTIFY_API_CLIENT_ID
+        let responseType = "code"
+        let redirectURI = "https://www.google.com"
+        components.queryItems = [
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: scope),
+            URLQueryItem(name: "response_type", value: responseType),
+            URLQueryItem(name: "redirect_uri", value: redirectURI),
+            URLQueryItem(name: "client_id", value: clientId)
+        ]
+        let requestURL = URL(string: components.string!)!
+        print(requestURL)
+        var urlRequest = URLRequest(url: requestURL)
+        urlRequest.httpMethod = "GET"
+        
+//        let task = URLSession.shared.dataTask(with: urlRequest) {(data, response, error) in
+//            if let error = error {
+//                return
+//            } else if let data = data {
+//                print(data)
+//                print(response)
+//            } else {
+//                return
+//            }
+//        }.resume()
+        return components.string!
+        
     }
     
     var body: some Scene {
         WindowGroup {
-            ZStack{
-                TabUIView(topSongs: userTopItems.topSongsList)
+            ZStack {
+                AuthorizationView(urlString: refreshAccessAndRefreshTokens())
+//                TabUIView(topSongs: userTopItems.topSongsList)
             }
-            
         }
     }
 }
@@ -115,8 +122,8 @@ class UserTopItems: ObservableObject {
         self.topArtistsList = [:]
         self.accessToken = access
         self.tokenType = token
-        getTopSongs()
-        getTopArtists()
+        //getTopSongs()
+        //getTopArtists()
         
         print(topSongsList)
     }
