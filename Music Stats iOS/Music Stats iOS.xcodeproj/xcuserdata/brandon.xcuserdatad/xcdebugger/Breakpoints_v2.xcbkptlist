@@ -14,9 +14,9 @@
             filePath = "Music Stats iOS/Music_Stats_iOSApp.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "refreshAccessAndRefreshTokens()"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "getAuthorizationCodeURL()"
             landmarkType = "7">
             <Locations>
                <Location

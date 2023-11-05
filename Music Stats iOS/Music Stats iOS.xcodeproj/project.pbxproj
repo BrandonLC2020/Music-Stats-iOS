@@ -20,6 +20,7 @@
 		CAEBBA482AE74B3000ABE21B /* Music_Stats_iOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA472AE74B3000ABE21B /* Music_Stats_iOSUITests.swift */; };
 		CAEBBA4A2AE74B3000ABE21B /* Music_Stats_iOSUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA492AE74B3000ABE21B /* Music_Stats_iOSUITestsLaunchTests.swift */; };
 		CAEBD6592AF428420086B01D /* AuthorizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBD6582AF428420086B01D /* AuthorizationView.swift */; };
+		CAEBD65B2AF458890086B01D /* UserTopItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBD65A2AF458890086B01D /* UserTopItems.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		CAEBBA472AE74B3000ABE21B /* Music_Stats_iOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_Stats_iOSUITests.swift; sourceTree = "<group>"; };
 		CAEBBA492AE74B3000ABE21B /* Music_Stats_iOSUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_Stats_iOSUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		CAEBD6582AF428420086B01D /* AuthorizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationView.swift; sourceTree = "<group>"; };
+		CAEBD65A2AF458890086B01D /* UserTopItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTopItems.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 				CA9CC0E92AE9D99900868478 /* CodableTypes.swift */,
 				CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */,
 				CAEBD6582AF428420086B01D /* AuthorizationView.swift */,
+				CAEBD65A2AF458890086B01D /* UserTopItems.swift */,
 			);
 			path = "Music Stats iOS";
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA9CC0E62AE9CDE100868478 /* SongCard.swift in Sources */,
+				CAEBD65B2AF458890086B01D /* UserTopItems.swift in Sources */,
 				CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */,
 				CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */,
 				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,

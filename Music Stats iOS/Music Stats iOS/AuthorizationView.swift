@@ -12,6 +12,8 @@ struct WebView: UIViewRepresentable {
     
     // 1
     var url: URL
+    @Binding var code: String
+    var state: String?
     @Binding var showWebView: Bool
     // 2
     func makeUIView(context: Context) -> WKWebView {
@@ -24,6 +26,48 @@ struct WebView: UIViewRepresentable {
     func updateUIView(_ webView: WKWebView, context: Context) {
         let request = URLRequest(url: url)
         webView.load(request)
+    }
+    
+    func getCode() -> String? {
+        return self.code
+    }
+    
+    func getCodeFromURL(urlString: String) -> String? {
+        if let urlComponent = URLComponents(string: urlString) {
+            // queryItems is an array of "key name" and "value"
+            let queryItems = urlComponent.queryItems
+            // to find "success" value, we need to find based on key name
+            let codeValue = queryItems?.first(where: { $0.name == "code" })?.value
+            // result is optional
+            if codeValue == nil {
+                print("Key code not found")
+            }
+            else {
+                // tadaa, here is the key value
+                print("Value of code: \(codeValue!)")
+            }
+            return codeValue
+        }
+        return nil
+    }
+    
+    func getStateFromURL(urlString: String) -> String? {
+        if let urlComponent = URLComponents(string: urlString) {
+            // queryItems is an array of "key name" and "value"
+            let queryItems = urlComponent.queryItems
+            // to find "success" value, we need to find based on key name
+            let stateValue = queryItems?.first(where: { $0.name == "state" })?.value
+            // result is optional
+            if stateValue == nil {
+                print("Key state not found")
+            }
+            else {
+                // tadaa, here is the key value
+                print("Value of state: \(stateValue!)")
+            }
+            return stateValue
+        }
+        return nil
     }
     
     func makeCoordinator() -> WebViewCoordinator {
@@ -41,7 +85,15 @@ struct WebView: UIViewRepresentable {
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
                 let urlToMatch = "https://www.google.com/?code="
                 if let urlStr = navigationAction.request.url?.absoluteString, urlStr.contains(urlToMatch) {
+                    let code = parent.getCodeFromURL(urlString: navigationAction.request.url!.absoluteString)
+                    print("return code is \(code ?? "EMPTY")")
+                    print(navigationAction.request.url!.absoluteString)
+                    let state = parent.getStateFromURL(urlString: navigationAction.request.url!.absoluteString)
+                    parent.code = code!
+                    parent.state = state
                     parent.showWebView = false
+                    print("completed")
+                    print(parent.code)
                 }
                 decisionHandler(.allow)
             }
@@ -55,16 +107,24 @@ struct AuthorizationView: View {
     // 1
     @State var showWebView: Bool = false
     var urlString: String
-    
+    @State var code: String = "AQDXD-Cj9hQfdGEL81Jzyl9zP8t2AuutxRw44D3xo-mz7Zlcvp_7CDcIeYXd8JpY-FMni4NSpikA0P1CQSU0489feHSKzzb6bYz58EXuAhUGhU9OY-JXCKlqc75fojPwJ8FpuRzd20FnHuzr3yNAJICMqMOdxcJUqzv2t1F7mUEc8XoECOlYlkz5SfNZsgznGdGtvfIUspuj0DmF9xY"
     
     var body: some View {
-        Button("Login") {
-            // 2
-            showWebView = true
-
-        }
-        .sheet(isPresented: $showWebView){
-            WebView(url: URL(string: urlString)!, showWebView: $showWebView)
+        NavigationView {
+            VStack {
+                Button("Authorize") {
+                    showWebView = true
+                }
+                .sheet(isPresented: $showWebView) {
+                    let webView = WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
+                    webView.onDisappear(perform: {
+                        while webView.getCode() != "" {}
+                        self.code = webView.code
+                    })
+                }
+                NavigationLink("Login", destination: TabUIView(code: self.code))
+                .disabled(code == "")
+            }
         }
     }
 }
