@@ -55,7 +55,7 @@ struct Music_Stats_iOSApp: App {
         components.path = "/authorize"
 
         let state = generateRandomString(length: 16)
-        let scope = "user-read-private user-read-email"
+        let scope = "user-read-private user-read-email user-top-read"
         let clientId = SPOTIFY_API_CLIENT_ID
         let responseType = "code"
         let redirectURI = "https://www.google.com"

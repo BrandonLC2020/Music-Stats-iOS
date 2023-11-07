@@ -41,7 +41,7 @@ struct TabUIView: View {
         self.accessToken = accessResults[0]
         self.tokenType = accessResults[1] 
         self.refreshToken = accessResults[2]
-        userTopItems = UserTopItems(access: self.accessToken, token: self.tokenType)
+        userTopItems = UserTopItems(access: accessResults[0], token: accessResults[1])
     }
     
     func getTokensURL() -> String {
@@ -70,11 +70,7 @@ struct TabUIView: View {
         ]
         urlRequest.httpBody = components.query?.data(using: .utf8)
         
-        var tempAccessToken = ""
-        var tempTokenType = ""
-        var tempRefreshToken = ""
-        print(urlRequest)
-        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, response, error in
+        URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, response, error in
             //print("this got called")
             if let httpResponse = response as? HTTPURLResponse {
                 if httpResponse.statusCode == 404 {
@@ -95,7 +91,7 @@ struct TabUIView: View {
             } else if let data = data {
                 //print("made it inn here")
                 //print(data)
-                let string = String(data: data, encoding: .utf8)
+//                let string = String(data: data, encoding: .utf8)
                 //print("string is \(string ?? "empty")")
                 let ret: AccessTokenResponse = try! JSONDecoder().decode(AccessTokenResponse.self, from: data)
 //                print("ret")

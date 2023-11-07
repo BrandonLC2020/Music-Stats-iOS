@@ -34,20 +34,57 @@ class UserTopItems: ObservableObject {
         self.accessToken = access
         self.tokenType = token
         getTopSongs()
-        getTopArtists()
+        //getTopArtists()
         print("we made it here")
         print(topSongsList)
     }
     
     func getTopSongs() {
-        let first50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 0)
-        let next50SongsResponseShortTerm = getSongsForTimeRange(range: "short_term", offset: 50)
+        var first50SongsResponseShortTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "short_term", offset: 0, userCompletionHandler: { user in
+            if let user = user {
+               first50SongsResponseShortTerm = user
+            }
+            
+        })
+        var next50SongsResponseShortTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "short_term", offset: 50, userCompletionHandler: { user in
+            if let user = user {
+                next50SongsResponseShortTerm = user
+            }
+            
+        })
         
-        let first50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 0)
-        let next50SongsResponseMediumTerm = getSongsForTimeRange(range: "medium_term", offset: 50)
+        var first50SongsResponseMediumTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "medium_term", offset: 0, userCompletionHandler: { user in
+            if let user = user {
+                first50SongsResponseMediumTerm = user
+            }
+            
+        })
+        var next50SongsResponseMediumTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "medium_term", offset: 50, userCompletionHandler: { user in
+            if let user = user {
+                next50SongsResponseMediumTerm = user
+            }
+            
+        })
         
-        let first50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 0)
-        let next50SongsResponseLongTerm = getSongsForTimeRange(range: "long_term", offset: 50)
+        var first50SongsResponseLongTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "long_term", offset: 0, userCompletionHandler: { user in
+            if let user = user {
+                first50SongsResponseLongTerm = user
+            }
+            
+        })
+        var next50SongsResponseLongTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getSongsForTimeRange(range: "long_term", offset: 50, userCompletionHandler: { user in
+            if let user = user {
+                next50SongsResponseLongTerm = user
+            }
+            
+        })
+        //while (next50SongsResponseLongTerm.items.isEmpty) {}
         
         let top100SongsShortTerm = first50SongsResponseShortTerm.items + next50SongsResponseShortTerm.items
         let top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
@@ -82,6 +119,7 @@ class UserTopItems: ObservableObject {
             }
             self.topSongsList["long"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["long"]![i].duration_ms, name: self.topSongsResponse["long"]![i].name, popularity: self.topSongsResponse["long"]![i].popularity))
         }
+         
     }
     
     func getTopArtists() {
@@ -114,9 +152,8 @@ class UserTopItems: ObservableObject {
         }
     }
     
-    func getSongsForTimeRange(range: String, offset: Int) -> TopSongsResponse {
-        var result: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
-
+    func getSongsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopSongsResponse?) -> Void) {
+        print("this is the access token: \(accessToken)")
         let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=\(range)&limit=50&offset=\(String(offset))"
         let authorizationAccessTokenStr = accessToken
         let authorizationTokenTypeStr = tokenType
@@ -125,7 +162,7 @@ class UserTopItems: ObservableObject {
         var request = URLRequest(url: URL(string: urlStr)!)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
             guard
                 let data = data,
                 let response = response as? HTTPURLResponse,
@@ -141,10 +178,11 @@ class UserTopItems: ObservableObject {
                 return
             }
             do {
-                //print(data)
+                print(data)
                 let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
-                //print(responseObject)
-                result = responseObject
+                print(responseObject)
+                userCompletionHandler(responseObject)
+                
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -153,9 +191,8 @@ class UserTopItems: ObservableObject {
                     print("unable to parse response as string")
                 }
             }
-        }.resume()
+        }).resume()
         //print(result)
-        return result
     }
     
     func getArtistsForTimeRange(range: String, offset: Int) -> TopArtistsResponse {
