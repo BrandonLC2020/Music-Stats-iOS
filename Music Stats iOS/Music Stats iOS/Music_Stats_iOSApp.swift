@@ -74,11 +74,7 @@ struct Music_Stats_iOSApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if (!authenticated) {
-                    AuthorizationView(urlString: self.authURL)
-                } else {
-                   TabUIView(code: UserDefaults.standard.object(forKey: "code") as! String)
-               }               
+                AuthorizationView(urlString: self.authURL)          
             }
         }
     }

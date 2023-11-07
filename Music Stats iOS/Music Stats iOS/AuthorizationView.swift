@@ -90,6 +90,7 @@ struct WebView: UIViewRepresentable {
                     print(navigationAction.request.url!.absoluteString)
                     let state = parent.getStateFromURL(urlString: navigationAction.request.url!.absoluteString)
                     parent.code = code!
+                    UserDefaults.standard.set(code, forKey: "code")
                     parent.state = state
                     parent.showWebView = false
                     print("completed")
@@ -107,7 +108,9 @@ struct AuthorizationView: View {
     // 1
     @State var showWebView: Bool = false
     var urlString: String
-    @State var code: String = "AQDXD-Cj9hQfdGEL81Jzyl9zP8t2AuutxRw44D3xo-mz7Zlcvp_7CDcIeYXd8JpY-FMni4NSpikA0P1CQSU0489feHSKzzb6bYz58EXuAhUGhU9OY-JXCKlqc75fojPwJ8FpuRzd20FnHuzr3yNAJICMqMOdxcJUqzv2t1F7mUEc8XoECOlYlkz5SfNZsgznGdGtvfIUspuj0DmF9xY"
+    @State var code: String = ""// "AQDXD-Cj9hQfdGEL81Jzyl9zP8t2AuutxRw44D3xo-mz7Zlcvp_7CDcIeYXd8JpY-FMni4NSpikA0P1CQSU0489feHSKzzb6bYz58EXuAhUGhU9OY-JXCKlqc75fojPwJ8FpuRzd20FnHuzr3yNAJICMqMOdxcJUqzv2t1F7mUEc8XoECOlYlkz5SfNZsgznGdGtvfIUspuj0DmF9xY"
+    @State var tabPage: TabUIView = TabUIView()
+    
     
     var body: some View {
         NavigationView {
@@ -118,12 +121,14 @@ struct AuthorizationView: View {
                 .sheet(isPresented: $showWebView) {
                     let webView = WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
                     webView.onDisappear(perform: {
-                        while webView.getCode() != "" {}
-                        self.code = webView.code
+                        print("this got activated")
+                        self.code = webView.getCode()!
+                        print("code received is \(self.code)")
+                        self.tabPage = TabUIView(code: self.code)
                     })
                 }
-                NavigationLink("Login", destination: TabUIView(code: self.code))
-                .disabled(code == "")
+                NavigationLink("Login", destination: tabPage)
+                    .disabled(self.code == "")
             }
         }
     }

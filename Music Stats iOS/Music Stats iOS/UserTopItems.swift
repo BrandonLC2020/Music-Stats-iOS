@@ -33,8 +33,8 @@ class UserTopItems: ObservableObject {
         self.topArtistsList = [:]
         self.accessToken = access
         self.tokenType = token
-//        getTopSongs()
-//        getTopArtists()
+        getTopSongs()
+        getTopArtists()
         print("we made it here")
         print(topSongsList)
     }
