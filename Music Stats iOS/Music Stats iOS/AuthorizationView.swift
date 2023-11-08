@@ -44,7 +44,7 @@ struct WebView: UIViewRepresentable {
             }
             else {
                 // tadaa, here is the key value
-                print("Value of code: \(codeValue!)")
+                //print("Value of code: \(codeValue!)")
             }
             return codeValue
         }
@@ -63,7 +63,7 @@ struct WebView: UIViewRepresentable {
             }
             else {
                 // tadaa, here is the key value
-                print("Value of state: \(stateValue!)")
+                //print("Value of state: \(stateValue!)")
             }
             return stateValue
         }
@@ -86,15 +86,15 @@ struct WebView: UIViewRepresentable {
                 let urlToMatch = "https://www.google.com/?code="
                 if let urlStr = navigationAction.request.url?.absoluteString, urlStr.contains(urlToMatch) {
                     let code = parent.getCodeFromURL(urlString: navigationAction.request.url!.absoluteString)
-                    print("return code is \(code ?? "EMPTY")")
-                    print(navigationAction.request.url!.absoluteString)
+                    //print("return code is \(code ?? "EMPTY")")
+                    //print(navigationAction.request.url!.absoluteString)
                     let state = parent.getStateFromURL(urlString: navigationAction.request.url!.absoluteString)
                     parent.code = code!
                     UserDefaults.standard.set(code, forKey: "code")
                     parent.state = state
                     parent.showWebView = false
-                    print("completed")
-                    print(parent.code)
+                    //print("completed")
+                    //print(parent.code)
                 }
                 decisionHandler(.allow)
             }

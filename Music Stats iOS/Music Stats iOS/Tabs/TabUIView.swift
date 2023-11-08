@@ -115,11 +115,11 @@ struct TabUIView: View {
     
     var body: some View {
         TabView {
-//            TopSongsView(topSongs: userTopItems.topSongsList)
-//                .tabItem {
-//                    Image(systemName: "music.note")
-//                    Text("Top Songs")
-//                }
+           TopSongsView(topSongs: userTopItems.topSongsList)
+                .tabItem {
+                    Image(systemName: "music.note")
+                    Text("Top Songs")
+                }
         }.accentColor(.black)
     }
 }

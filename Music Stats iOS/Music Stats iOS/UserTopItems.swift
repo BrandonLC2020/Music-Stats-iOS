@@ -35,65 +35,58 @@ class UserTopItems: ObservableObject {
         self.tokenType = token
         getTopSongs()
         //getTopArtists()
-        print("we made it here")
+//        print("we made it here")
         print(topSongsList)
     }
     
     func getTopSongs() {
-        var first50SongsResponseShortTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        var top50SongsResponseShortTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
         getSongsForTimeRange(range: "short_term", offset: 0, userCompletionHandler: { user in
             if let user = user {
-               first50SongsResponseShortTerm = user
-            }
-            
-        })
-        var next50SongsResponseShortTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
-        getSongsForTimeRange(range: "short_term", offset: 50, userCompletionHandler: { user in
-            if let user = user {
-                next50SongsResponseShortTerm = user
+                top50SongsResponseShortTerm = user
             }
             
         })
         
-        var first50SongsResponseMediumTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        //print("first 50 songs for short term")
+        while (top50SongsResponseShortTerm.items.isEmpty) {}
+        //print(first50SongsResponseShortTerm.items)
+        sleep(2)
+        
+        var top50SongsResponseMediumTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
         getSongsForTimeRange(range: "medium_term", offset: 0, userCompletionHandler: { user in
             if let user = user {
-                first50SongsResponseMediumTerm = user
-            }
-            
-        })
-        var next50SongsResponseMediumTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
-        getSongsForTimeRange(range: "medium_term", offset: 50, userCompletionHandler: { user in
-            if let user = user {
-                next50SongsResponseMediumTerm = user
+                top50SongsResponseMediumTerm = user
             }
             
         })
         
-        var first50SongsResponseLongTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        while (top50SongsResponseMediumTerm.items.isEmpty) {}
+        sleep(2)
+        
+        
+        var top50SongsResponseLongTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
         getSongsForTimeRange(range: "long_term", offset: 0, userCompletionHandler: { user in
             if let user = user {
-                first50SongsResponseLongTerm = user
+                top50SongsResponseLongTerm = user
             }
             
         })
-        var next50SongsResponseLongTerm: TopSongsResponse = TopSongsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
-        getSongsForTimeRange(range: "long_term", offset: 50, userCompletionHandler: { user in
-            if let user = user {
-                next50SongsResponseLongTerm = user
-            }
-            
-        })
-        //while (next50SongsResponseLongTerm.items.isEmpty) {}
         
-        let top100SongsShortTerm = first50SongsResponseShortTerm.items + next50SongsResponseShortTerm.items
-        let top100SongsMediumTerm = first50SongsResponseMediumTerm.items + next50SongsResponseMediumTerm.items
-        let top100SongsLongTerm = first50SongsResponseLongTerm.items + next50SongsResponseLongTerm.items
+        while (top50SongsResponseLongTerm.items.isEmpty) {}
+
         
-        self.topSongsResponse = ["short" : top100SongsShortTerm, "medium" : top100SongsMediumTerm, "long" : top100SongsLongTerm]
+        
+        print("everything is loaded")
+        
+        let topSongsShortTerm = top50SongsResponseShortTerm.items
+        let topSongsMediumTerm = top50SongsResponseMediumTerm.items
+        let topSongsLongTerm = top50SongsResponseLongTerm.items
+        
+        self.topSongsResponse = ["short" : topSongsShortTerm, "medium" : topSongsMediumTerm, "long" : topSongsLongTerm]
         
         self.topSongsList["short"] = []
-        for i in 0...self.topSongsResponse["short"]!.endIndex {
+        for i in 0...self.topSongsResponse["short"]!.endIndex-1{
             let album: Album = Album(images: self.topSongsResponse["short"]![i].album.images, name: self.topSongsResponse["short"]![i].album.name, release_date: self.topSongsResponse["short"]![i].album.release_date)
             var artist: [Artist] = []
             for art in self.topSongsResponse["short"]![i].artists {
@@ -102,7 +95,7 @@ class UserTopItems: ObservableObject {
             self.topSongsList["short"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["short"]![i].duration_ms, name: self.topSongsResponse["short"]![i].name, popularity: self.topSongsResponse["short"]![i].popularity))
         }
         self.topSongsList["medium"] = []
-        for i in 0...self.topSongsResponse["medium"]!.endIndex {
+        for i in 0...self.topSongsResponse["medium"]!.endIndex-1 {
             let album: Album = Album(images: self.topSongsResponse["medium"]![i].album.images, name: self.topSongsResponse["medium"]![i].album.name, release_date: self.topSongsResponse["medium"]![i].album.release_date)
             var artist: [Artist] = []
             for art in self.topSongsResponse["medium"]![i].artists {
@@ -111,7 +104,7 @@ class UserTopItems: ObservableObject {
             self.topSongsList["medium"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["medium"]![i].duration_ms, name: self.topSongsResponse["medium"]![i].name, popularity: self.topSongsResponse["medium"]![i].popularity))
         }
         self.topSongsList["long"] = []
-        for i in 0...self.topSongsResponse["long"]!.endIndex {
+        for i in 0...self.topSongsResponse["long"]!.endIndex-1 {
             let album: Album = Album(images: self.topSongsResponse["long"]![i].album.images, name: self.topSongsResponse["long"]![i].album.name, release_date: self.topSongsResponse["long"]![i].album.release_date)
             var artist: [Artist] = []
             for art in self.topSongsResponse["long"]![i].artists {
@@ -119,6 +112,7 @@ class UserTopItems: ObservableObject {
             }
             self.topSongsList["long"]?.append(Song(rank: i+1, album: album, artists: artist, duration_ms: self.topSongsResponse["long"]![i].duration_ms, name: self.topSongsResponse["long"]![i].name, popularity: self.topSongsResponse["long"]![i].popularity))
         }
+         
          
     }
     
@@ -153,7 +147,7 @@ class UserTopItems: ObservableObject {
     }
     
     func getSongsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopSongsResponse?) -> Void) {
-        print("this is the access token: \(accessToken)")
+        //print("this is the access token: \(accessToken)")
         let urlStr = "https://api.spotify.com/v1/me/top/tracks?time_range=\(range)&limit=50&offset=\(String(offset))"
         let authorizationAccessTokenStr = accessToken
         let authorizationTokenTypeStr = tokenType
@@ -178,9 +172,9 @@ class UserTopItems: ObservableObject {
                 return
             }
             do {
-                print(data)
+                //print(data)
                 let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
-                print(responseObject)
+                //print(responseObject)
                 userCompletionHandler(responseObject)
                 
             } catch {
