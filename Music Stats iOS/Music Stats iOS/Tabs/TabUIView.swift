@@ -17,19 +17,16 @@ struct AccessTokenResponse: Codable {
 }
 
 struct TabUIView: View {
-    @State var accessToken: String
-    @State var tokenType: String
-    @State var refreshToken: String? = UserDefaults.standard.object(forKey: "refreshToken") as? String
-    @State var userTopItems: UserTopItems = UserTopItems()
-
-    init() {
-        self.accessToken = ""
-        self.tokenType = ""
-    }
+    var access: [String]?
+//    @State var accessToken: String
+//    @State var tokenType: String
+//    @State var refreshToken: String? = UserDefaults.standard.object(forKey: "refreshToken") as? String
+    
+    init() {}
     
     init(code: String) {
-        self.accessToken = ""
-        self.tokenType = ""
+//        self.accessToken = ""
+//        self.tokenType = ""
         var accessResults: [String] = []
         getTokens(code: code, userCompletionHandler: { user in
             if let user = user {
@@ -38,10 +35,11 @@ struct TabUIView: View {
             
         })
         while (accessResults.isEmpty) {}
-        self.accessToken = accessResults[0]
-        self.tokenType = accessResults[1] 
-        self.refreshToken = accessResults[2]
-        userTopItems = UserTopItems(access: accessResults[0], token: accessResults[1])
+        self.access = accessResults
+//        self.accessToken = accessResults[0]
+//        self.tokenType = accessResults[1] 
+//        self.refreshToken = accessResults[2]
+        
     }
     
     func getTokensURL() -> String {
@@ -110,16 +108,16 @@ struct TabUIView: View {
 //        self.accessToken = tempAccessToken
 //        self.tokenType = tempTokenType
 //        self.refreshToken = tempRefreshToken
-        UserDefaults.standard.set(self.refreshToken, forKey: "refreshToken")
     }
     
     var body: some View {
         TabView {
-           TopSongsView(topSongs: userTopItems.topSongsList)
+            TopSongsView(access: access![0], type: access![1])
                 .tabItem {
                     Image(systemName: "music.note")
                     Text("Top Songs")
                 }
+            
         }.accentColor(.black)
     }
 }

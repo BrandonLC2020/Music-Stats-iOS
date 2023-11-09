@@ -42,7 +42,7 @@ struct SongCard: View {
                     //rank
                     Text(String(song.rank ?? Int()))
                         .bold()
-                        .frame(width:geometry.size.width/40, height:geometry.size.width/40)
+                        .frame(width:geometry.size.width/17, height:geometry.size.width/40)
                         .padding(.leading)
                     //album cover
                     AsyncImage(url: URL(string: song.album.images[0].url)) { image in
