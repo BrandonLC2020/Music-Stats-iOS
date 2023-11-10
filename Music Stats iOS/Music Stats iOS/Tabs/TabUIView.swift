@@ -118,7 +118,10 @@ struct TabUIView: View {
                     Text("Top Songs")
                 }
             
-        }.accentColor(.black)
+        }
+        .accentColor(.black)
+        .navigationBarBackButtonHidden(true)
+        .navigationTitle("Top Songs")
     }
 }
 
