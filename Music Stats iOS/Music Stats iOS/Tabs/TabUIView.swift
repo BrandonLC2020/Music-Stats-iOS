@@ -117,11 +117,18 @@ struct TabUIView: View {
                     Image(systemName: "music.note")
                     Text("Top Songs")
                 }
+                .navigationTitle("Top Songs")
+            TopArtistsView(access: access![0], type: access![1])
+                .tabItem {
+                    Image(systemName: "music.mic")
+                    Text("Top Artists")
+                }
+                .navigationTitle("Top Artists")
             
         }
         .accentColor(.black)
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("Top Songs")
+        
     }
 }
 

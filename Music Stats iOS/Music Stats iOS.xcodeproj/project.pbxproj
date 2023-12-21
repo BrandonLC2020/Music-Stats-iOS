@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
 		CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */; };
 		CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0DF2AE9CC0000868478 /* TopSongsView.swift */; };
@@ -41,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		CA6BBC702AE8554000CB99EC /* TabUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabUIView.swift; sourceTree = "<group>"; };
 		CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableTypes.swift; sourceTree = "<group>"; };
 		CA9CC0DF2AE9CC0000868478 /* TopSongsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopSongsView.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				CA9CC0E32AE9CD0A00868478 /* TopArtistsView.swift */,
+				CA0E11942B347B9500792E68 /* ArtistCard.swift */,
 			);
 			path = "Top Artists";
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 				CAEBD65B2AF458890086B01D /* UserTopItems.swift in Sources */,
 				CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */,
 				CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */,
+				CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */,
 				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,
 				CA9CC0EA2AE9D99900868478 /* CodableTypes.swift in Sources */,
 				CA9CC0E42AE9CD0A00868478 /* TopArtistsView.swift in Sources */,

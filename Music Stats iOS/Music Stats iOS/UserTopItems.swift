@@ -34,7 +34,7 @@ class UserTopItems: ObservableObject {
         self.accessToken = access
         self.tokenType = token
         getTopSongs()
-        //getTopArtists()
+        getTopArtists()
 //        print("we made it here")
         print(topSongsList)
     }
@@ -118,30 +118,28 @@ class UserTopItems: ObservableObject {
     
     func getTopArtists() {
         let first50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 0)
-        let next50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 50)
+        
         
         let first50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 0)
-        let next50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 50)
         
         let first50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 0)
-        let next50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 50)
         
-        let top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items + next50ArtistsResponseShortTerm.items
-        let top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items + next50ArtistsResponseMediumTerm.items
-        let top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items + next50ArtistsResponseLongTerm.items
+        let top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items
+        let top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items
+        let top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items
         
         self.topArtistsResponse = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
         
         self.topArtistsList["short"] = []
-        for i in 0...self.topArtistsResponse["short"]!.endIndex {
+        for i in 0...self.topArtistsResponse["short"]!.endIndex-1 {
             self.topArtistsList["short"]?.append(Artist(rank: i+1, images: self.topArtistsResponse["short"]![i].images, name: self.topArtistsResponse["short"]![i].name, popularity: self.topArtistsResponse["short"]![i].popularity, artistId: self.topArtistsResponse["short"]![i].id))
         }
         self.topArtistsList["medium"] = []
-        for i in 0...self.topArtistsResponse["medium"]!.endIndex {
+        for i in 0...self.topArtistsResponse["medium"]!.endIndex-1 {
             self.topArtistsList["medium"]?.append(Artist(rank: i+1, images: self.topArtistsResponse["medium"]![i].images, name: self.topArtistsResponse["medium"]![i].name, popularity: self.topArtistsResponse["medium"]![i].popularity, artistId: self.topArtistsResponse["medium"]![i].id))
         }
         self.topArtistsList["long"] = []
-        for i in 0...self.topArtistsResponse["long"]!.endIndex {
+        for i in 0...self.topArtistsResponse["long"]!.endIndex-1 {
             self.topArtistsList["long"]?.append(Artist(rank: i+1, images: self.topArtistsResponse["long"]![i].images, name: self.topArtistsResponse["long"]![i].name, popularity: self.topArtistsResponse["long"]![i].popularity, artistId: self.topArtistsResponse["long"]![i].id))
         }
     }

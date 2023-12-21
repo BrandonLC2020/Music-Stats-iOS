@@ -1,31 +1,23 @@
 //
-//  SongCard.swift
+//  ArtistCard.swift
 //  Music Stats iOS
 //
-//  Created by Brandon Lamer-Connolly on 10/25/23.
+//  Created by Brandon Lamer-Connolly on 12/21/23.
 //
 
+import Foundation
 import SwiftUI
 
-struct SongCard: View {
-    var song: Song
+struct ArtistCard: View {
+    var artist: Artist
     var parentGeo: GeometryProxy
     
-    func artistsToStr() -> String {
-        var result : String = ""
-        for artist in song.artists {
-            result += artist.name + ", "
-        }
-        let endIndex = result.index(result.endIndex, offsetBy: -2)
-        let truncated = result[..<endIndex]
-        return String(truncated)
-    }
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 HStack(alignment: .center) {
-                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
+                    AsyncImage(url: URL(string: artist.images![0].url)) { image in
                         image.resizable()
                     } placeholder: {
                         ProgressView()
@@ -46,12 +38,12 @@ struct SongCard: View {
                     //.frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
                 HStack(alignment: .center) {
                     //rank
-                    Text(String(song.rank ?? Int()))
+                    Text(String(artist.rank ?? Int()))
                         .bold()
                         .frame(width:geometry.size.width/16, height:geometry.size.width/40)
                         .padding(.leading)
                     //album cover
-                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
+                    AsyncImage(url: URL(string: artist.images![0].url)) { image in
                         image.resizable()
                     } placeholder: {
                         ProgressView()
@@ -61,10 +53,8 @@ struct SongCard: View {
                     .padding(.all)
                     //song title
                     VStack(alignment: .leading) {
-                        Text(song.name)
+                        Text(artist.name)
                             .bold()
-                            .lineLimit(1)
-                        Text(artistsToStr())
                             .lineLimit(1)
                     }
                     .padding(.trailing)
@@ -79,7 +69,3 @@ struct SongCard: View {
         .frame(width: parentGeo.size.width/1.07, height: parentGeo.size.height/7.5)
     }
 }
-
-//#Preview {
-//    SongCard(song: Song(rank: 1, album: Album(images: [ImageResponse(url: "https://i.scdn.co/image/ab67616d0000b273f76f8deeba5370c98ad38f1c", height: 640, width: 640)], name: "Chemical", release_date: "2023-04-14"), artists: [Artist(name: "Post Malone", artistId: "246dkjvS1zLTtiykXe5h60")], duration_ms: 184013, name: "Chemical", popularity: 88))
-//}
