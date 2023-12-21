@@ -117,18 +117,42 @@ class UserTopItems: ObservableObject {
     }
     
     func getTopArtists() {
-        let first50ArtistsResponseShortTerm = getArtistsForTimeRange(range: "short_term", offset: 0)
+        var top50ArtistsResponseShortTerm: TopArtistsResponse = TopArtistsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getArtistsForTimeRange(range: "short_term", offset: 0, userCompletionHandler: { user in
+               if let user = user {
+                   top50ArtistsResponseShortTerm = user
+               }
+        })
+        
+        while (top50ArtistsResponseShortTerm.items.isEmpty) {}
+        sleep(2)
         
         
-        let first50ArtistsResponseMediumTerm = getArtistsForTimeRange(range: "medium_term", offset: 0)
+        var top50ArtistsResponseMediumTerm: TopArtistsResponse = TopArtistsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getArtistsForTimeRange(range: "medium_term", offset: 0, userCompletionHandler: { user in
+               if let user = user {
+                   top50ArtistsResponseMediumTerm = user
+               }
+        })
         
-        let first50ArtistsResponseLongTerm = getArtistsForTimeRange(range: "long_term", offset: 0)
+        while (top50ArtistsResponseMediumTerm.items.isEmpty) {}
+        sleep(2)
         
-        let top100ArtistsShortTerm = first50ArtistsResponseShortTerm.items
-        let top100ArtistsMediumTerm = first50ArtistsResponseMediumTerm.items
-        let top100ArtistsLongTerm = first50ArtistsResponseLongTerm.items
+        var top50ArtistsResponseLongTerm: TopArtistsResponse = TopArtistsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+        getArtistsForTimeRange(range: "long_term", offset: 0, userCompletionHandler: { user in
+               if let user = user {
+                   top50ArtistsResponseLongTerm = user
+               }
+        })
         
-        self.topArtistsResponse = ["short" : top100ArtistsShortTerm, "medium" : top100ArtistsMediumTerm, "long" : top100ArtistsLongTerm]
+        while (top50ArtistsResponseLongTerm.items.isEmpty) {}
+        sleep(2)
+        
+        let topArtistsShortTerm = top50ArtistsResponseShortTerm.items
+        let topArtistsMediumTerm = top50ArtistsResponseMediumTerm.items
+        let topArtistsLongTerm = top50ArtistsResponseLongTerm.items
+        
+        self.topArtistsResponse = ["short" : topArtistsShortTerm, "medium" : topArtistsMediumTerm, "long" : topArtistsLongTerm]
         
         self.topArtistsList["short"] = []
         for i in 0...self.topArtistsResponse["short"]!.endIndex-1 {
@@ -187,17 +211,17 @@ class UserTopItems: ObservableObject {
         //print(result)
     }
     
-    func getArtistsForTimeRange(range: String, offset: Int) -> TopArtistsResponse {
-        var result: TopArtistsResponse = TopArtistsResponse(href: "", limit: 0, offset: 0, total: 0, items: [])
+    func getArtistsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopArtistsResponse?) -> Void) {
+        
         
         let urlStr = "https://api.spotify.com/v1/me/top/artists?time_range=" + range + "&limit=50&offset=" + String(offset)
-        let authorizationAccessTokenStr = UserDefaults.standard.object(forKey: "access_token") as! String
-        let authorizationTokenTypeStr = UserDefaults.standard.object(forKey: "token_type") as! String
+        let authorizationAccessTokenStr = accessToken
+        let authorizationTokenTypeStr = tokenType
         let requestHeaders: [String:String] = ["Authorization" : authorizationTokenTypeStr + " " + authorizationAccessTokenStr]
         var request = URLRequest(url: URL(string: urlStr)!)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
             guard
                 let data = data,
                 let response = response as? HTTPURLResponse,
@@ -214,7 +238,7 @@ class UserTopItems: ObservableObject {
             }
             do {
                 let responseObject: TopArtistsResponse = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
-                result = responseObject
+                userCompletionHandler(responseObject)
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -223,9 +247,7 @@ class UserTopItems: ObservableObject {
                     print("unable to parse response as string")
                 }
             }
-        }.resume()
-        print(result)
-        return result
+        }).resume()
     }
     
 }

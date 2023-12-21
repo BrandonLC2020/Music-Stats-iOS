@@ -12,7 +12,7 @@ struct TopArtistsView: View {
     @State var selection: Int = 0
     var accessToken: String
     var tokenType: String
-    
+    var twoColumnGrid = [GridItem(.flexible(), spacing: 2), GridItem(.flexible(), spacing: 2)]
     
     
     init(access: String, type: String) {
@@ -26,46 +26,54 @@ struct TopArtistsView: View {
             NavigationView {
                 ZStack {
                     VStack {
+                        Picker(selection: $selection, label: Text("Time Period")) {
+                            Text("Past Month").tag(0)
+                            Text("Past 6 Months").tag(1)
+                            Text("Past Years").tag(2)
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding([.top, .leading, .trailing])
                         //Text("Top Artists").font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                         ScrollView {
-                            Picker(selection: $selection, label: Text("Time Period")) {
-                                Text("Short Term").tag(0)
-                                Text("Medium Term").tag(1)
-                                Text("Long Term").tag(2)
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .padding([.top, .leading, .trailing])
+                            
                             
                             if selection == 0 {
-                                VStack(/*spacing: -geometry.size.height/1.175*/) {
+                                VStack {
                                     ForEach(userTopItems.topArtistsList["short"]!, id: \.self) { artist in
-                                        ArtistCard(artist: artist, parentGeo: geometry)
-                                            //.frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
+                                        if (artist.rank != 50) {
+                                            ArtistCard(artist: artist, parentGeo: geometry)
+                                        } else {
+                                            ArtistCard(artist: artist, parentGeo: geometry).padding(.bottom)
+                                        }
                                     }
                                 }
                             } else if selection == 1 {
                                 VStack(/*spacing: -geometry.size.height/1.175*/) {
                                     ForEach(userTopItems.topArtistsList["medium"]!, id: \.self) { artist in
-                                        ArtistCard(artist: artist, parentGeo: geometry)//.frame(width: geometry.size.width, height: geometry.size.height)
+                                        if (artist.rank != 50) {
+                                            ArtistCard(artist: artist, parentGeo: geometry)
+                                        } else {
+                                            ArtistCard(artist: artist, parentGeo: geometry).padding(.bottom)
+                                        }
                                     }
                                 }
                             } else {
                                 VStack(/*spacing: -geometry.size.height/1.175*/) {
                                     ForEach(userTopItems.topArtistsList["long"]!, id: \.self) { artist in
-                                        ArtistCard(artist: artist, parentGeo: geometry)
-//                                            .aspectRatio(1, contentMode: .fit)
-//                                            .frame(minWidth: geometry.size.width/1.07, idealWidth: geometry.size.width/1.07, maxWidth: geometry.size.width/1.07, minHeight: geometry.size.height/7.5, idealHeight: geometry.size.height/7.5, maxHeight: geometry.size.height/7.5)
-//                                            .clipped()
-                                            //.frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
-                                            //.frame(width: geometry.size.width, height: geometry.size.height)
-                                        
+                                        if (artist.rank != 50) {
+                                            ArtistCard(artist: artist, parentGeo: geometry)
+                                        } else {
+                                            ArtistCard(artist: artist, parentGeo: geometry).padding(.bottom)
+                                        }
                                     }
                                 }
                             }
                         }//.padding(.bottom)
                     }
                 }
-            }.navigationTitle("Top Songs")
+                .navigationTitle("Top Artists")
+                .navigationBarTitleDisplayMode(.large)
+            }
         }//.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         
     }
