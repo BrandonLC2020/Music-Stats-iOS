@@ -8,13 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
+		CA3A7A592C4728480064F3DC /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CA3A7A582C4725630064F3DC /* Config.xcconfig */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
 		CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */; };
 		CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0DF2AE9CC0000868478 /* TopSongsView.swift */; };
 		CA9CC0E42AE9CD0A00868478 /* TopArtistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0E32AE9CD0A00868478 /* TopArtistsView.swift */; };
 		CA9CC0E62AE9CDE100868478 /* SongCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0E52AE9CDE100868478 /* SongCard.swift */; };
 		CA9CC0EA2AE9D99900868478 /* CodableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0E92AE9D99900868478 /* CodableTypes.swift */; };
-		CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */; };
 		CAEBBA342AE74B2F00ABE21B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CAEBBA332AE74B2F00ABE21B /* Preview Assets.xcassets */; };
 		CAEBBA3E2AE74B3000ABE21B /* Music_Stats_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA3D2AE74B3000ABE21B /* Music_Stats_iOSTests.swift */; };
@@ -44,6 +44,7 @@
 /* Begin PBXFileReference section */
 		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		CA3A7A582C4725630064F3DC /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Music-Stats-iOS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CA6BBC702AE8554000CB99EC /* TabUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabUIView.swift; sourceTree = "<group>"; };
 		CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableTypes.swift; sourceTree = "<group>"; };
 		CA9CC0DF2AE9CC0000868478 /* TopSongsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopSongsView.swift; sourceTree = "<group>"; };
@@ -137,6 +138,7 @@
 		CAEBBA2B2AE74B2B00ABE21B /* Music Stats iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */,
 				CA9CC0E12AE9CCEF00868478 /* Top Artists */,
 				CA9CC0DE2AE9CBED00868478 /* Top Songs */,
 				CA6BBC6F2AE8552B00CB99EC /* Tabs */,
@@ -282,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAEBBA342AE74B2F00ABE21B /* Preview Assets.xcassets in Resources */,
+				CA3A7A592C4728480064F3DC /* Config.xcconfig in Resources */,
 				CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,7 +312,6 @@
 			files = (
 				CA9CC0E62AE9CDE100868478 /* SongCard.swift in Sources */,
 				CAEBD65B2AF458890086B01D /* UserTopItems.swift in Sources */,
-				CAEBBA2D2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift in Sources */,
 				CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */,
 				CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */,
 				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,
@@ -482,6 +484,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Stats iOS/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Music-Stats-iOS-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -510,6 +513,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Music Stats iOS/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Music-Stats-iOS-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

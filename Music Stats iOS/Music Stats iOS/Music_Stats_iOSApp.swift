@@ -10,8 +10,8 @@ import Foundation
 import CryptoKit
 import WebKit
 
-let SPOTIFY_API_CLIENT_ID = "3c71d3fa96a74c1999184c5690f507d9"
-let SPOTIFY_API_CLIENT_SECRET = "fe3b975ee9b4499f9d72a9bddd5b3c86"
+let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID")
+let SPOTIFY_API_CLIENT_SECRET = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET")
 
 func isLoggedIn() -> Bool {
     let code = UserDefaults.standard.object(forKey: "code") as? String
