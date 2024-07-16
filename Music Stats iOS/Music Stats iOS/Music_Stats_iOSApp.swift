@@ -58,7 +58,7 @@ struct Music_Stats_iOSApp: App {
         let scope = "user-read-private user-read-email user-top-read"
         let clientId = SPOTIFY_API_CLIENT_ID
         let responseType = "code"
-        let redirectURI = "https://www.google.com"
+        let redirectURI = "http://localhost:8000"
         components.queryItems = [
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: scope),

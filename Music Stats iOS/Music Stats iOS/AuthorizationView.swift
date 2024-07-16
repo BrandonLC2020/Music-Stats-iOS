@@ -108,7 +108,7 @@ struct AuthorizationView: View {
     // 1
     @State var showWebView: Bool = false
     var urlString: String
-    @State var code: String = ""// "AQDXD-Cj9hQfdGEL81Jzyl9zP8t2AuutxRw44D3xo-mz7Zlcvp_7CDcIeYXd8JpY-FMni4NSpikA0P1CQSU0489feHSKzzb6bYz58EXuAhUGhU9OY-JXCKlqc75fojPwJ8FpuRzd20FnHuzr3yNAJICMqMOdxcJUqzv2t1F7mUEc8XoECOlYlkz5SfNZsgznGdGtvfIUspuj0DmF9xY"
+    @State var code: String = ""
     @State var tabPage: TabUIView = TabUIView()
     
     
