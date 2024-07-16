@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import Foundation
+
+//let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as! String
 
 
 struct AccessTokenResponse: Codable {
@@ -52,8 +55,14 @@ struct TabUIView: View {
     
     func getTokens(code: String, userCompletionHandler: @escaping ([String]?) -> Void) {
         var urlRequest = URLRequest(url: URL(string: getTokensURL())!)
-        let combo = "\(SPOTIFY_API_CLIENT_ID):\(SPOTIFY_API_CLIENT_SECRET)"
+        let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
+
+        let SPOTIFY_API_CLIENT_SECRET = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET") as? String
+
+        let combo = "\(SPOTIFY_API_CLIENT_ID ?? ""):\(SPOTIFY_API_CLIENT_SECRET ?? "")"
+        print(combo)
         let comboEncoded = combo.data(using: .utf8)?.base64EncodedString()
+        print(comboEncoded!)
         urlRequest.httpMethod = "POST"
         urlRequest.allHTTPHeaderFields = ["Authorization" : "Basic \(comboEncoded!)", "Content-Type" : "application/x-www-form-urlencoded"]
         

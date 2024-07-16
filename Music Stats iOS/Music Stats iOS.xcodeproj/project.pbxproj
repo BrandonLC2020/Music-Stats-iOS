@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA3A7A592C4728480064F3DC /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CA3A7A582C4725630064F3DC /* Config.xcconfig */; };
+		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
 		CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */; };
 		CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CC0DF2AE9CC0000868478 /* TopSongsView.swift */; };
@@ -315,6 +316,7 @@
 				CA9CC0E02AE9CC0000868478 /* TopSongsView.swift in Sources */,
 				CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */,
 				CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */,
+				CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */,
 				CA9CC0EA2AE9D99900868478 /* CodableTypes.swift in Sources */,
 				CA9CC0E42AE9CD0A00868478 /* TopArtistsView.swift in Sources */,
 				CAEBD6592AF428420086B01D /* AuthorizationView.swift in Sources */,
@@ -476,6 +478,7 @@
 		};
 		CAEBBA4E2AE74B3000ABE21B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA3A7A582C4725630064F3DC /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -505,6 +508,7 @@
 		};
 		CAEBBA4F2AE74B3000ABE21B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA3A7A582C4725630064F3DC /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

@@ -10,9 +10,6 @@ import Foundation
 import CryptoKit
 import WebKit
 
-let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID")
-let SPOTIFY_API_CLIENT_SECRET = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET")
-
 func isLoggedIn() -> Bool {
     let code = UserDefaults.standard.object(forKey: "code") as? String
     if code == nil {
@@ -53,6 +50,7 @@ struct Music_Stats_iOSApp: App {
         components.scheme = "https"
         components.host = "accounts.spotify.com"
         components.path = "/authorize"
+        let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
 
         let state = generateRandomString(length: 16)
         let scope = "user-read-private user-read-email user-top-read"
@@ -66,7 +64,7 @@ struct Music_Stats_iOSApp: App {
             URLQueryItem(name: "redirect_uri", value: redirectURI),
             URLQueryItem(name: "client_id", value: clientId)
         ]
-        
+        print(components.string!)
         return components.string!
         
     }
