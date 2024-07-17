@@ -115,9 +115,15 @@ struct AuthorizationView: View {
     var body: some View {
         NavigationView {
             VStack {
+                Image("Image")
+                    .resizable()
+                    .cornerRadius(30.0)
+                    .scaledToFill()
+                    .frame(width: 200, height: 200)
                 Button("Authorize") {
                     showWebView = true
                 }
+                .padding(10)
                 .sheet(isPresented: $showWebView) {
                     let webView = WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
                     webView.onDisappear(perform: {
