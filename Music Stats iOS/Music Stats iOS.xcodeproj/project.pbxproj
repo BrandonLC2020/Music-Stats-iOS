@@ -91,6 +91,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA265FFB2C497D7400C1B3DB /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */,
+				CA9CC0E92AE9D99900868478 /* CodableTypes.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
 		CA6BBC6F2AE8552B00CB99EC /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +149,7 @@
 		CAEBBA2B2AE74B2B00ABE21B /* Music Stats iOS */ = {
 			isa = PBXGroup;
 			children = (
+				CA265FFB2C497D7400C1B3DB /* Types */,
 				CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */,
 				CA9CC0E12AE9CCEF00868478 /* Top Artists */,
 				CA9CC0DE2AE9CBED00868478 /* Top Songs */,
@@ -147,8 +157,6 @@
 				CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */,
 				CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */,
 				CAEBBA322AE74B2F00ABE21B /* Preview Content */,
-				CA9CC0E92AE9D99900868478 /* CodableTypes.swift */,
-				CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */,
 				CAEBD6582AF428420086B01D /* AuthorizationView.swift */,
 				CA265FF42C49576A00C1B3DB /* Sample.xcconfig */,
 				CAEBD65A2AF458890086B01D /* UserTopItems.swift */,
