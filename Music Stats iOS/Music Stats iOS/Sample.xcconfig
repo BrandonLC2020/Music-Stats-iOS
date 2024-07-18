@@ -1,0 +1,11 @@
+//
+//  Sample.xcconfig
+//  Music Stats iOS
+//
+//  Created by Brandon Lamer-Connolly on 7/18/24.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+SPOTIFY_API_CLIENT_ID =
+SPOTIFY_API_CLIENT_SECRET = 

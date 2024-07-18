@@ -44,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
+		CA265FF42C49576A00C1B3DB /* Sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sample.xcconfig; sourceTree = "<group>"; };
 		CA3A7A582C4725630064F3DC /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Music-Stats-iOS-Info.plist"; sourceTree = SOURCE_ROOT; };
 		CA6BBC702AE8554000CB99EC /* TabUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabUIView.swift; sourceTree = "<group>"; };
@@ -149,6 +150,7 @@
 				CA9CC0E92AE9D99900868478 /* CodableTypes.swift */,
 				CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */,
 				CAEBD6582AF428420086B01D /* AuthorizationView.swift */,
+				CA265FF42C49576A00C1B3DB /* Sample.xcconfig */,
 				CAEBD65A2AF458890086B01D /* UserTopItems.swift */,
 				CA3A7A582C4725630064F3DC /* Config.xcconfig */,
 			);
