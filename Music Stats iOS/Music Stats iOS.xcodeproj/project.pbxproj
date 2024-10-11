@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
-		CA3A7A592C4728480064F3DC /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CA3A7A582C4725630064F3DC /* Config.xcconfig */; };
 		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
 		CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9CA59D2AEB33A100794277 /* IdentifiableTypes.swift */; };
@@ -254,7 +253,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					CAEBBA282AE74B2B00ABE21B = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -295,7 +294,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAEBBA342AE74B2F00ABE21B /* Preview Assets.xcassets in Resources */,
-				CA3A7A592C4728480064F3DC /* Config.xcconfig in Resources */,
 				CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -551,7 +549,6 @@
 		CAEBBA512AE74B3000ABE21B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -570,7 +567,6 @@
 		CAEBBA522AE74B3000ABE21B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -589,7 +585,6 @@
 		CAEBBA542AE74B3000ABE21B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -606,7 +601,6 @@
 		CAEBBA552AE74B3000ABE21B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
