@@ -104,6 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				CA6BBC702AE8554000CB99EC /* TabUIView.swift */,
+				CA9CC0E12AE9CCEF00868478 /* Top Artists */,
+				CA9CC0DE2AE9CBED00868478 /* Top Songs */,
 			);
 			path = Tabs;
 			sourceTree = "<group>";
@@ -151,8 +153,6 @@
 			children = (
 				CA265FFB2C497D7400C1B3DB /* Types */,
 				CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */,
-				CA9CC0E12AE9CCEF00868478 /* Top Artists */,
-				CA9CC0DE2AE9CBED00868478 /* Top Songs */,
 				CA6BBC6F2AE8552B00CB99EC /* Tabs */,
 				CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */,
 				CAEBBA302AE74B2F00ABE21B /* Assets.xcassets */,
