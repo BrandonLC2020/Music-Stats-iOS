@@ -24,7 +24,6 @@ struct TopArtistsResponse: Codable, Hashable {
     var total: Int
     var items: [ArtistResponse]
 }
-    
 
 struct SongResponse: Codable, Hashable {
     var album: AlbumResponse
