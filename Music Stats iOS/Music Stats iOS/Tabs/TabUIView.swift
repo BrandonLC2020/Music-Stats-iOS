@@ -8,7 +8,7 @@
 import SwiftUI
 import Foundation
 
-//let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as! String
+// let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as! String
 
 
 struct AccessTokenResponse: Codable {

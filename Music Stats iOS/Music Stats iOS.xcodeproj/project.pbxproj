@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71E379212CE526900016B8A8 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 71E379202CE526900016B8A8 /* Config.xcconfig */; };
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		71E379202CE526900016B8A8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		CA265FF42C49576A00C1B3DB /* Sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sample.xcconfig; sourceTree = "<group>"; };
 		CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Music-Stats-iOS-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -157,6 +159,7 @@
 				CAEBBA322AE74B2F00ABE21B /* Preview Content */,
 				CAEBD6582AF428420086B01D /* AuthorizationView.swift */,
 				CA265FF42C49576A00C1B3DB /* Sample.xcconfig */,
+				71E379202CE526900016B8A8 /* Config.xcconfig */,
 				CAEBD65A2AF458890086B01D /* UserTopItems.swift */,
 			);
 			path = "Music Stats iOS";
@@ -292,6 +295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAEBBA342AE74B2F00ABE21B /* Preview Assets.xcassets in Resources */,
+				71E379212CE526900016B8A8 /* Config.xcconfig in Resources */,
 				CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -484,6 +488,7 @@
 		};
 		CAEBBA4E2AE74B3000ABE21B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 71E379202CE526900016B8A8 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
