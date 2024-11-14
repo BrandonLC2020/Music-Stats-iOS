@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		71E379212CE526900016B8A8 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 71E379202CE526900016B8A8 /* Config.xcconfig */; };
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
@@ -254,7 +253,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					CAEBBA282AE74B2B00ABE21B = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -295,7 +294,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAEBBA342AE74B2F00ABE21B /* Preview Assets.xcassets in Resources */,
-				71E379212CE526900016B8A8 /* Config.xcconfig in Resources */,
 				CAEBBA312AE74B2F00ABE21B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
