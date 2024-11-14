@@ -494,6 +494,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Music Stats iOS/Preview Content\"";
+				DEVELOPMENT_TEAM = YNT6PGUJ53;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Music-Stats-iOS-Info.plist";
@@ -524,6 +525,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Music Stats iOS/Preview Content\"";
+				DEVELOPMENT_TEAM = YNT6PGUJ53;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Music-Stats-iOS-Info.plist";
