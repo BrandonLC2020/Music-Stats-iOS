@@ -135,7 +135,6 @@ struct TabUIView: View {
                 .navigationTitle("Top Artists")
             
         }
-        .accentColor(.black)
         .navigationBarBackButtonHidden(true)
         
     }
