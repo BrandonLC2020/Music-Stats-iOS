@@ -83,7 +83,7 @@ struct WebView: UIViewRepresentable {
             //https://www.google.com/?code=AQDXD-Cj9hQfdGEL81Jzyl9zP8t2AuutxRw44D3xo-mz7Zlcvp_7CDcIeYXd8JpY-FMni4NSpikA0P1CQSU0489feHSKzzb6bYz58EXuAhUGhU9OY-JXCKlqc75fojPwJ8FpuRzd20FnHuzr3yNAJICMqMOdxcJUqzv2t1F7mUEc8XoECOlYlkz5SfNZsgznGdGtvfIUspuj0DmF9xY&state=478a062507d3087f
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-                let urlToMatch = "https://www.google.com/?code="
+                let urlToMatch = "https://brandonlc2020.github.io/PersonalRedirectInspectorWebApp/?code="
                 if let urlStr = navigationAction.request.url?.absoluteString, urlStr.contains(urlToMatch) {
                     let code = parent.getCodeFromURL(urlString: navigationAction.request.url!.absoluteString)
                     //print("return code is \(code ?? "EMPTY")")

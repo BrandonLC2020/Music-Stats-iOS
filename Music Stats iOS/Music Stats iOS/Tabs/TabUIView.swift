@@ -66,7 +66,7 @@ struct TabUIView: View {
         urlRequest.httpMethod = "POST"
         urlRequest.allHTTPHeaderFields = ["Authorization" : "Basic \(comboEncoded!)", "Content-Type" : "application/x-www-form-urlencoded"]
         
-        let redirectURI = "https://www.google.com"
+        let redirectURI = "https://brandonlc2020.github.io/PersonalRedirectInspectorWebApp"
         let grantType = "authorization_code"
         var components = URLComponents()
         //print("code is \(code)")
