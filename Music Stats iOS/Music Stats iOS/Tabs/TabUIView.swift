@@ -62,7 +62,7 @@ struct TabUIView: View {
         let combo = "\(SPOTIFY_API_CLIENT_ID ?? ""):\(SPOTIFY_API_CLIENT_SECRET ?? "")"
         print(combo)
         let comboEncoded = combo.data(using: .utf8)?.base64EncodedString()
-        print(comboEncoded!)
+        print("this is encoded thing: \(comboEncoded!)")
         urlRequest.httpMethod = "POST"
         urlRequest.allHTTPHeaderFields = ["Authorization" : "Basic \(comboEncoded!)", "Content-Type" : "application/x-www-form-urlencoded"]
         let REDIRECT_URI_HOST = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
@@ -104,11 +104,11 @@ struct TabUIView: View {
                 //print("string is \(string ?? "empty")")
                 let ret: AccessTokenResponse = try! JSONDecoder().decode(AccessTokenResponse.self, from: data)
 //                print("ret")
-//                print(ret)
+                print(ret)
 //                print(ret.access_token)
 //                self.accessToken = ret.access_token
 //                self.tokenType = ret.token_type
-//                self.refreshToken = ret.refresh_token
+//               self.refreshToken = ret.refresh_token
                 userCompletionHandler([ret.access_token , ret.token_type , ret.refresh_token])
             } else {
                 print("Unexpected error!")
