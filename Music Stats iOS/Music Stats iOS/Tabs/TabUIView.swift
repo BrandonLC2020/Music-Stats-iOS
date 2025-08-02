@@ -11,24 +11,31 @@ import Foundation
 struct TabUIView: View {
 
     @EnvironmentObject var authManager: AuthManager
+    @StateObject private var userTopItems = UserTopItems()
 
     var body: some View {
         TabView {
             if let accessToken = authManager.accessToken, let tokenType = authManager.tokenType {
-                TopSongsView(access: accessToken, type: tokenType)
+                TopSongsView(userTopItems: userTopItems)
                     .tabItem {
                         Image(systemName: "music.note")
                         Text("Top Songs")
                     }
-                    .navigationTitle("Top Songs")
-                TopArtistsView(access: accessToken, type: tokenType)
+                TopArtistsView(userTopItems: userTopItems)
                     .tabItem {
                         Image(systemName: "music.mic")
                         Text("Top Artists")
                     }
-                    .navigationTitle("Top Artists")
             } else {
                 ProgressView()
+            }
+        }
+        .onAppear {
+            if let accessToken = authManager.accessToken, let tokenType = authManager.tokenType {
+                userTopItems.accessToken = accessToken
+                userTopItems.tokenType = tokenType
+                userTopItems.getTopSongs {}
+                userTopItems.getTopArtists {}
             }
         }
         .navigationBarBackButtonHidden(true)
