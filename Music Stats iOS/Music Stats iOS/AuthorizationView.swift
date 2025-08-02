@@ -9,7 +9,9 @@ import SwiftUI
 @preconcurrency import WebKit
 
 struct WebView: UIViewRepresentable {
-    
+
+    @EnvironmentObject var authManager: AuthManager
+
     // 1
     var url: URL
     @Binding var code: String
@@ -19,14 +21,14 @@ struct WebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let wKWebView = WKWebView()
         wKWebView.navigationDelegate = context.coordinator
-        
+
         // --- ADD THIS LINE ---
         // Call the setup method immediately after creation.
         context.coordinator.setupObserver(for: wKWebView)
-        
+
         return wKWebView
     }
-    
+
     // 3
     func updateUIView(_ webView: WKWebView, context: Context) {
         let request = URLRequest(url: url)
@@ -36,7 +38,7 @@ struct WebView: UIViewRepresentable {
     func getCode() -> String? {
         return self.code
     }
-    
+
     func getCodeFromURL(urlString: String) -> String? {
         if let urlComponent = URLComponents(string: urlString) {
             // queryItems is an array of "key name" and "value"
@@ -55,7 +57,7 @@ struct WebView: UIViewRepresentable {
         }
         return nil
     }
-    
+
     func getStateFromURL(urlString: String) -> String? {
         if let urlComponent = URLComponents(string: urlString) {
             // queryItems is an array of "key name" and "value"
@@ -74,14 +76,14 @@ struct WebView: UIViewRepresentable {
         }
         return nil
     }
-    
+
     func makeCoordinator() -> WebViewCoordinator {
         WebViewCoordinator(self)
     }
-    
+
     class WebViewCoordinator: NSObject, WKNavigationDelegate {
         var parent: WebView
-        
+
         // Properties for our logic
         private var urlObserver: NSKeyValueObservation?
         private var didFindCode = false
@@ -106,7 +108,7 @@ struct WebView: UIViewRepresentable {
                         // Check that the code exists in the URL.
                         if self.parent.getCodeFromURL(urlString: url.absoluteString) != nil {
                             self.didFindCode = true // Prevents this from running again.
-                            
+
                             // Set the flag and wait for didFinish to be called. DO NOT dismiss yet.
                             self.isAwaitingFinalLoad = true
                         }
@@ -123,11 +125,9 @@ struct WebView: UIViewRepresentable {
 
                 // Now that the page has rendered, we can safely parse the code and dismiss.
                 guard let url = webView.url, let code = self.parent.getCodeFromURL(urlString: url.absoluteString) else { return }
-                
+
                 DispatchQueue.main.async {
-                    self.parent.code = code
-                    self.parent.state = self.parent.getStateFromURL(urlString: url.absoluteString)
-                    UserDefaults.standard.set(code, forKey: "code")
+                    self.parent.authManager.logIn(with: code)
                     self.parent.showWebView = false
                     self.urlObserver?.invalidate()
                 }
@@ -147,13 +147,14 @@ struct WebView: UIViewRepresentable {
 
 
 struct AuthorizationView: View {
+
+    @EnvironmentObject var authManager: AuthManager
+
     // 1
     @State var showWebView: Bool = false
     var urlString: String
     @State var code: String = ""
-    @State var tabPage: TabUIView = TabUIView()
-    
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -167,21 +168,14 @@ struct AuthorizationView: View {
                 }
                 .padding(10)
                 .sheet(isPresented: $showWebView) {
-                    let webView = WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
-                    webView.onDisappear(perform: {
-                        print("this got activated")
-                        self.code = webView.getCode()!
-                        print("code received is \(self.code)")
-                        self.tabPage = TabUIView(code: self.code)
-                    })
+                    WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
+                        .environmentObject(authManager)
                 }
-                NavigationLink("Login", destination: tabPage)
-                    .disabled(self.code == "")
             }
         }
     }
 }
 #Preview {
-    AuthorizationView(urlString: "https://accounts.spotify.com/authorize?state=cdd3298e37b276c0&scope=user-read-private%20user-read-email&response_type=code&redirect_uri=https://www.google.com&client_id=3c71d3fa96a74c1999184c5690f507d9")
+    AuthorizationView(urlString: "https://accounts.spotify.com/authorize")
+        .environmentObject(AuthManager())
 }
-

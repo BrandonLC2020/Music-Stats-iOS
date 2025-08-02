@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71C478812E3D818300BBCF6E /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 71C478802E3D818300BBCF6E /* KeychainSwift */; };
+		71C478832E3D861C00BBCF6E /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C478822E3D861C00BBCF6E /* AuthManager.swift */; };
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
@@ -42,6 +44,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		71C478822E3D861C00BBCF6E /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		71E379202CE526900016B8A8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		CA265FF42C49576A00C1B3DB /* Sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sample.xcconfig; sourceTree = "<group>"; };
@@ -70,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71C478812E3D818300BBCF6E /* KeychainSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +154,7 @@
 		CAEBBA2B2AE74B2B00ABE21B /* Music Stats iOS */ = {
 			isa = PBXGroup;
 			children = (
+				71C478822E3D861C00BBCF6E /* AuthManager.swift */,
 				CA265FFB2C497D7400C1B3DB /* Types */,
 				CA3A7A5A2C4729430064F3DC /* Music-Stats-iOS-Info.plist */,
 				CA6BBC6F2AE8552B00CB99EC /* Tabs */,
@@ -277,6 +282,9 @@
 				Base,
 			);
 			mainGroup = CAEBBA202AE74B2B00ABE21B;
+			packageReferences = (
+				71C4787F2E3D818300BBCF6E /* XCRemoteSwiftPackageReference "keychain-swift" */,
+			);
 			productRefGroup = CAEBBA2A2AE74B2B00ABE21B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -327,6 +335,7 @@
 				CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */,
 				CA9CC0EA2AE9D99900868478 /* CodableTypes.swift in Sources */,
 				CA9CC0E42AE9CD0A00868478 /* TopArtistsView.swift in Sources */,
+				71C478832E3D861C00BBCF6E /* AuthManager.swift in Sources */,
 				CAEBD6592AF428420086B01D /* AuthorizationView.swift in Sources */,
 				CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */,
 			);
@@ -659,6 +668,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		71C4787F2E3D818300BBCF6E /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		71C478802E3D818300BBCF6E /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71C4787F2E3D818300BBCF6E /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CAEBBA212AE74B2B00ABE21B /* Project object */;
 }
