@@ -7,7 +7,6 @@ struct TopArtistsView: View {
     @State private var selection: Int = 0
 
     var body: some View {
-        // GeometryReader has been removed.
         NavigationView {
             VStack {
                 Picker(selection: $selection, label: Text("Time Period")) {
