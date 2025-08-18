@@ -1,85 +1,66 @@
-//
-//  SongCard.swift
-//  Music Stats iOS
-//
-//  Created by Brandon Lamer-Connolly on 10/25/23.
-//
+// SongCard.swift
 
 import SwiftUI
 
 struct SongCard: View {
     var song: Song
-    var parentGeo: GeometryProxy
-    
-    func artistsToStr() -> String {
-        var result : String = ""
-        for artist in song.artists {
-            result += artist.name + ", "
-        }
-        let endIndex = result.index(result.endIndex, offsetBy: -2)
-        let truncated = result[..<endIndex]
-        return String(truncated)
+
+    // This helper function is now more efficient and safer.
+    private func artistsToString() -> String {
+        return song.artists.map { $0.name }.joined(separator: ", ")
     }
-    
+
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                HStack(alignment: .center) {
-                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
-                        image.resizable()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .cornerRadius(15.0)
-                    .blur(radius: 4.2)
-                    .scaledToFill()
-                    //.scaledToFit()
-                    .frame(width: parentGeo.size.width/1.07, height: parentGeo.size.height/7.5)
-                    //.frame(width: geometry.size.width,  height: geometry.size.height)
-                    //.frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
-                    .clipped()
-                }.cornerRadius(15.0)
-                RoundedRectangle(cornerRadius: 15.0).frame(alignment: .center)
-                    .foregroundColor(.gray.opacity(0.7))
-                    .frame(width: parentGeo.size.width/1.07, height: parentGeo.size.height/7.5)
-                    //.frame(width: geometry.size.width,  height: geometry.size.height)
-                    //.frame(width: geometry.size.width/1.07, height: geometry.size.height/7.5)
-                HStack(alignment: .center) {
-                    //rank
-                    Text(String(song.rank ?? Int()))
-                        .bold()
-                        .frame(width:geometry.size.width/16, height:geometry.size.width/40)
-                        .padding(.leading)
-                    //album cover
-                    AsyncImage(url: URL(string: song.album.images[0].url)) { image in
-                        image.resizable()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: geometry.size.width/5.0, height: geometry.size.width/5.0)
-                    .cornerRadius(15.0)
-                    .padding(.all)
-                    //song title
-                    VStack(alignment: .leading) {
-                        Text(song.name)
-                            .bold()
-                            .lineLimit(1)
-                        Text(artistsToStr())
-                            .lineLimit(1)
-                    }
-                    .padding(.trailing)
-                    
-                    Spacer()
-                }//.padding(.all)
+        // The main view is now the content HStack. Its size will determine the card's size.
+        HStack(alignment: .center) {
+            // 1. Rank
+            Text(String(song.rank ?? 0))
+                .bold()
+                .frame(width: 30, alignment: .leading)
+                .padding(.leading)
+
+            // 2. Album Cover
+            AsyncImage(url: URL(string: song.album.images.first?.url ?? "")) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
             }
-            //.frame(alignment: .top)
-            
+            // Use a fixed frame for the image. Padding on this element will define the card's height.
+            .frame(width: 80, height: 80)
+            .cornerRadius(10.0)
+            .padding(.vertical, 10)
+
+            // 3. Song Title and Artists
+            VStack(alignment: .leading) {
+                Text(song.name)
+                    .bold()
+                    .lineLimit(1)
+                Text(artistsToString())
+                    .lineLimit(1)
+            }
+            .padding(.trailing)
+
+            Spacer()
         }
-        //.frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        .frame(width: parentGeo.size.width/1.07, height: parentGeo.size.height/7.5)
+        // The background is now a modifier. It sizes itself automatically to the HStack above.
+        .background(
+            ZStack {
+                // Background blurred image
+                AsyncImage(url: URL(string: song.album.images.first?.url ?? "")) { image in
+                    image.resizable()
+                } placeholder: {
+                    Color.clear
+                }
+                .scaledToFill()
+                .blur(radius: 5)
+
+                // Overlay
+                Rectangle()
+                    .foregroundColor(.gray.opacity(0.6))
+            }
+        )
+        // Clip the entire view (including the background) to have rounded corners.
+        .cornerRadius(15.0)
+        .clipped()
     }
 }
-
-//#Preview {
-//    SongCard(song: Song(rank: 1, album: Album(images: [ImageResponse(url: "https://i.scdn.co/image/ab67616d0000b273f76f8deeba5370c98ad38f1c", height: 640, width: 640)], name: "Chemical", release_date: "2023-04-14"), artists: [Artist(name: "Post Malone", artistId: "246dkjvS1zLTtiykXe5h60")], duration_ms: 184013, name: "Chemical", popularity: 88))
-//}
