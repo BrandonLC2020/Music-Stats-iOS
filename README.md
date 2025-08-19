@@ -8,7 +8,7 @@ Have you ever wondered what your most-played songs and artists are over the last
 
 ## Features
 
-  * **Secure Spotify Authentication:** Utilizes a secure OAuth 2.0 flow to connect to your Spotify account.
+  * **Secure Spotify Authentication:** Utilizes a secure authorization flow to connect to your Spotify account.
   * **Top Songs and Artists:** View your top 50 songs and artists from three different time ranges:
       * Last Month (short\_term)
       * Last 6 Months (medium\_term)
