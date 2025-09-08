@@ -6,6 +6,10 @@ Music-Stats-iOS is a Swift-based iOS application that leverages the Spotify Web 
 
 Have you ever wondered what your most-played songs and artists are over the last month, six months, or even several years? Music-Stats-iOS connects securely to your Spotify account to fetch and display this information in a clean, intuitive, and native iOS interface. This app is perfect for music enthusiasts who want to delve deeper into their listening patterns and rediscover their favorite tunes.
 
+## Demo
+
+You can see screen recordings and screenshots of the app [here](https://brandonlc2020.github.io/Portfolio/project/6).
+
 ## Features
 
   * **Secure Spotify Authentication:** Utilizes a secure authorization flow to connect to your Spotify account.
