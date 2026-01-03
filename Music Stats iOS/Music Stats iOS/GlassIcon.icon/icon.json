@@ -9,9 +9,19 @@
     {
       "layers" : [
         {
-          "image-name" : "Icon.png",
-          "name" : "Icon",
-          "opacity" : 0.8
+          "image-name" : "Music Stats Icon Foreground 2.png",
+          "name" : "Music Stats Icon Foreground 2",
+          "position" : {
+            "scale" : 0.9,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "image-name" : "Music Stats Icon Background.png",
+          "name" : "Music Stats Icon Background"
         }
       ],
       "shadow" : {
