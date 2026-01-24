@@ -42,13 +42,13 @@ You can see screen recordings and screenshots of the app [here](https://brandonl
 ```mermaid
 graph TD
     subgraph "Music-Stats-iOS App"
-        A[UI<br>(SwiftUI)]
-        B[Business Logic<br>(Swift)]
-        C[Secure Storage<br>(Keychain-Swift)]
+        A["UI<br>(SwiftUI)"]
+        B["Business Logic<br>(Swift)"]
+        C["Secure Storage<br>(Keychain-Swift)"]
     end
 
     subgraph "External Services"
-        D[Spotify Web API]
+        D["Spotify Web API"]
     end
 
     A -- User Input --> B
