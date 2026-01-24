@@ -37,6 +37,32 @@ You can see screen recordings and screenshots of the app [here](https://brandonl
   * **Keychain-Swift:** A third-party library used for securely storing the Spotify refresh token in the keychain.
   * **Xcode:** Developed and built using Xcode.
 
+## Architecture
+
+```mermaid
+graph TD
+    subgraph "Music-Stats-iOS App"
+        A[UI<br>(SwiftUI)]
+        B[Business Logic<br>(Swift)]
+        C[Secure Storage<br>(Keychain-Swift)]
+    end
+
+    subgraph "External Services"
+        D[Spotify Web API]
+    end
+
+    A -- User Input --> B
+    B -- Manages Auth Tokens --> C
+    B -- API Requests --> D
+    D -- API Responses --> B
+    B -- Updates UI with Data --> A
+
+    style A fill:#007AFF,stroke:#333,stroke-width:2px,color:white
+    style B fill:#FFA500,stroke:#333,stroke-width:2px,color:white
+    style C fill:#FF3B30,stroke:#333,stroke-width:2px,color:white
+    style D fill:#1DB954,stroke:#191414,stroke-width:2px,color:white
+```
+
 ## Installation
 
 ### Prerequisites
