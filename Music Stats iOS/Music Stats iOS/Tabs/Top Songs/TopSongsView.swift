@@ -18,20 +18,17 @@ struct TopSongsView: View {
                 .padding([.top, .leading, .trailing])
 
                 if let songs = songsForSelection() {
-                    ScrollView {
-                        // Add spacing to the VStack to separate cards.
-                        VStack(spacing: 10) {
-                            ForEach(songs, id: \.self) { song in
-                                NavigationLink(destination: SongDetailView(song: song)) {
-                                    SongCard(song: song)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
+                    List(songs) { song in
+                        NavigationLink(destination: SongDetailView(song: song)) {
+                            SongCard(song: song)
                         }
-                        // Use horizontal padding on the VStack to create margins.
-                        .padding(.horizontal)
-                        .padding(.bottom)
+                        .buttonStyle(PlainButtonStyle())
+                        .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
+                    .listStyle(PlainListStyle())
+                    .padding(.bottom)
                 } else {
                     Spacer()
                     ProgressView("Loading Songs...")

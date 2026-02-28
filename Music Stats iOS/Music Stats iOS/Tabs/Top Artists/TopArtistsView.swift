@@ -18,19 +18,17 @@ struct TopArtistsView: View {
                 .padding([.top, .leading, .trailing])
 
                 if let artists = artistsForSelection() {
-                    ScrollView {
-                        // Add spacing and padding for a clean layout.
-                        VStack(spacing: 10) {
-                            ForEach(artists, id: \.self) { artist in
-                                NavigationLink(destination: ArtistDetailView(artist: artist)) {
-                                    ArtistCard(artist: artist)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                            }
+                    List(artists) { artist in
+                        NavigationLink(destination: ArtistDetailView(artist: artist)) {
+                            ArtistCard(artist: artist)
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom)
+                        .buttonStyle(PlainButtonStyle())
+                        .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
                     }
+                    .listStyle(PlainListStyle())
+                    .padding(.bottom)
                 } else {
                     Spacer()
                     ProgressView("Loading Artists...")

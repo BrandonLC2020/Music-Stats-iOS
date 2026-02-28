@@ -39,8 +39,9 @@ class UserTopItems: ObservableObject {
                         
                         self.topSongsList[key] = songsResponse.items.enumerated().map { (index, songResponse) in
                             let album = Album(images: songResponse.album.images, name: songResponse.album.name, release_date: songResponse.album.release_date)
-                            let artists = songResponse.artists.map { Artist(name: $0.name, artistId: $0.id) }
-                            return Song(rank: index + 1, album: album, artists: artists, duration_ms: songResponse.duration_ms, name: songResponse.name, popularity: songResponse.popularity)
+                            let rank = index + 1
+                            let artists = songResponse.artists.map { Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }
+                            return Song(id: "\(key)-\(rank)-\(songResponse.id)", spotifyId: songResponse.id, rank: rank, album: album, artists: artists, duration_ms: songResponse.duration_ms, name: songResponse.name, popularity: songResponse.popularity)
                         }
                     }
                 }
@@ -66,7 +67,8 @@ class UserTopItems: ObservableObject {
                         self.topArtistsResponse[key] = artistsResponse.items
                         
                         self.topArtistsList[key] = artistsResponse.items.enumerated().map { (index, artistResponse) in
-                            return Artist(rank: index + 1, images: artistResponse.images, name: artistResponse.name, popularity: artistResponse.popularity, artistId: artistResponse.id, genres: artistResponse.genres)
+                            let rank = index + 1
+                            return Artist(id: "\(key)-\(rank)-\(artistResponse.id)", spotifyId: artistResponse.id, rank: rank, images: artistResponse.images, name: artistResponse.name, popularity: artistResponse.popularity, genres: artistResponse.genres)
                         }
                     }
                 }

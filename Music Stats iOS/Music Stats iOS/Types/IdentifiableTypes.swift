@@ -31,7 +31,8 @@ struct TopArtists: Identifiable, Hashable {
     
 
 struct Song: Identifiable, Hashable {
-    let id = UUID()
+    var id: String // Unique ID for SwiftUI (e.g., "short-1-spotifyId")
+    var spotifyId: String
     var rank: Int?
     var album: Album
     var artists: [Artist]
@@ -41,12 +42,12 @@ struct Song: Identifiable, Hashable {
 }
 
 struct Artist: Identifiable, Hashable {
-    let id = UUID()
+    var id: String // Unique ID for SwiftUI (e.g., "short-1-spotifyId")
+    var spotifyId: String
     var rank: Int?
     var images: [ImageResponse]?
     var name: String
     var popularity: Int?
-    var artistId: String
     var genres: [String]?
 }
 
