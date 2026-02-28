@@ -47,6 +47,7 @@ struct Artist: Identifiable, Hashable {
     var name: String
     var popularity: Int?
     var artistId: String
+    var genres: [String]?
 }
 
 struct Album: Identifiable, Hashable {

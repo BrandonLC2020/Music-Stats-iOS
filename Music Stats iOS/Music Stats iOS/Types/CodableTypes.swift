@@ -38,6 +38,7 @@ struct ArtistResponse: Codable, Hashable {
     var name: String
     var popularity: Int?
     var id: String
+    var genres: [String]?
 }
 
 struct AlbumResponse: Codable, Hashable {

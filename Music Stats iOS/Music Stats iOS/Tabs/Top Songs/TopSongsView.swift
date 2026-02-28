@@ -22,8 +22,10 @@ struct TopSongsView: View {
                         // Add spacing to the VStack to separate cards.
                         VStack(spacing: 10) {
                             ForEach(songs, id: \.self) { song in
-                                // The card is now called without passing any geometry information.
-                                SongCard(song: song)
+                                NavigationLink(destination: SongDetailView(song: song)) {
+                                    SongCard(song: song)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         // Use horizontal padding on the VStack to create margins.

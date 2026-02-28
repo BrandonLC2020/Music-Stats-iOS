@@ -22,8 +22,10 @@ struct TopArtistsView: View {
                         // Add spacing and padding for a clean layout.
                         VStack(spacing: 10) {
                             ForEach(artists, id: \.self) { artist in
-                                // The call to ArtistCard is now much simpler.
-                                ArtistCard(artist: artist)
+                                NavigationLink(destination: ArtistDetailView(artist: artist)) {
+                                    ArtistCard(artist: artist)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(.horizontal)

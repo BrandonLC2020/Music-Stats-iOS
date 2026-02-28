@@ -66,7 +66,7 @@ class UserTopItems: ObservableObject {
                         self.topArtistsResponse[key] = artistsResponse.items
                         
                         self.topArtistsList[key] = artistsResponse.items.enumerated().map { (index, artistResponse) in
-                            return Artist(rank: index + 1, images: artistResponse.images, name: artistResponse.name, popularity: artistResponse.popularity, artistId: artistResponse.id)
+                            return Artist(rank: index + 1, images: artistResponse.images, name: artistResponse.name, popularity: artistResponse.popularity, artistId: artistResponse.id, genres: artistResponse.genres)
                         }
                     }
                 }
