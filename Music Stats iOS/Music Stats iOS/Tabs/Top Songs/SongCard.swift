@@ -41,6 +41,12 @@ struct SongCard: View {
             .padding(.trailing)
 
             Spacer()
+
+            // 4. Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.secondary)
+                .padding(.trailing)
         }
         // The background is now a modifier. It sizes itself automatically to the HStack above.
         .background(

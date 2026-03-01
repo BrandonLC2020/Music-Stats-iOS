@@ -33,6 +33,12 @@ struct ArtistCard: View {
             .padding(.trailing)
 
             Spacer()
+
+            // 4. Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.secondary)
+                .padding(.trailing)
         }
         // The same background modifier technique is used here.
         .background(
