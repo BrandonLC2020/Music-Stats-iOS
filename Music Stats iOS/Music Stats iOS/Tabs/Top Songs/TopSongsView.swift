@@ -41,17 +41,7 @@ struct TopSongsView: View {
                                 Text("Past Years").tag(2)
                             }
                         } label: {
-                            HStack(spacing: 4) {
-                                Text(selectionTitle)
-                                Image(systemName: "chevron.down")
-                                    .font(.system(size: 12, weight: .bold))
-                            }
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.secondary.opacity(0.15))
-                            .cornerRadius(8)
+                            Image(systemName: "calendar")
                         }
                     }
                 }
@@ -61,15 +51,6 @@ struct TopSongsView: View {
                 }
                 .navigationTitle("Top Songs")
             }
-        }
-    }
-
-    private var selectionTitle: String {
-        switch selection {
-        case 0: return "Past Month"
-        case 1: return "Past 6 Months"
-        case 2: return "Past Years"
-        default: return ""
         }
     }
 

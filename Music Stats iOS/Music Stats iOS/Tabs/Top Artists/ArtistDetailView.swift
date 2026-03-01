@@ -44,7 +44,9 @@ struct ArtistDetailView: View {
 
                     // 3. Details Section
                     VStack(alignment: .leading, spacing: 12) {
-                        DetailRow(label: "Genres", value: genresToString(genres: artist.genres))
+                        if let genres = artist.genres, !genres.isEmpty {
+                            DetailRow(label: "Genres", value: genresToString(genres: genres))
+                        }
                         if let popularity = artist.popularity {
                             DetailRow(label: "Popularity", value: "\(popularity)/100")
                         }
