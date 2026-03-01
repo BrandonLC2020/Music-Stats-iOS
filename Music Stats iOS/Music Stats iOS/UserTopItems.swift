@@ -38,7 +38,7 @@ class UserTopItems: ObservableObject {
                         self.topSongsResponse[key] = songsResponse.items
                         
                         self.topSongsList[key] = songsResponse.items.enumerated().map { (index, songResponse) in
-                            let album = Album(images: songResponse.album.images, name: songResponse.album.name, release_date: songResponse.album.release_date)
+                            let album = Album(id: songResponse.album.id, images: songResponse.album.images, name: songResponse.album.name, release_date: songResponse.album.release_date)
                             let rank = index + 1
                             let artists = songResponse.artists.map { Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }
                             return Song(id: "\(key)-\(rank)-\(songResponse.id)", spotifyId: songResponse.id, rank: rank, album: album, artists: artists, duration_ms: songResponse.duration_ms, name: songResponse.name, popularity: songResponse.popularity)
@@ -190,5 +190,66 @@ class UserTopItems: ObservableObject {
             }
         }).resume()
     }
-    
+
+    func getTrack(id: String, userCompletionHandler: @escaping (SongResponse?) -> Void) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.spotify.com"
+        components.path = "/v1/tracks/\(id)"
+
+        guard let url = components.url else {
+            userCompletionHandler(nil)
+            return
+        }
+
+        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = requestHeaders
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                userCompletionHandler(nil)
+                return
+            }
+            do {
+                let track = try JSONDecoder().decode(SongResponse.self, from: data)
+                userCompletionHandler(track)
+            } catch {
+                print("Error decoding track: \(error)")
+                userCompletionHandler(nil)
+            }
+        }.resume()
+    }
+
+    func getArtist(id: String, userCompletionHandler: @escaping (ArtistResponse?) -> Void) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.spotify.com"
+        components.path = "/v1/artists/\(id)"
+
+        guard let url = components.url else {
+            userCompletionHandler(nil)
+            return
+        }
+
+        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = requestHeaders
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                userCompletionHandler(nil)
+                return
+            }
+            do {
+                let artist = try JSONDecoder().decode(ArtistResponse.self, from: data)
+                userCompletionHandler(artist)
+            } catch {
+                print("Error decoding artist: \(error)")
+                userCompletionHandler(nil)
+            }
+        }.resume()
+    }
 }

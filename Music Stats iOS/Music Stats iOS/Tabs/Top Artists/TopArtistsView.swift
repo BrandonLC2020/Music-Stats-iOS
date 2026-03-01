@@ -5,22 +5,30 @@ import SwiftUI
 struct TopArtistsView: View {
     @ObservedObject var userTopItems: UserTopItems
     @State private var selection: Int = 0
+    @State private var selectedArtist: Artist?
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             if let artists = artistsForSelection() {
                 ScrollView {
                     LazyVStack(spacing: 10) {
                         ForEach(artists) { artist in
-                            NavigationLink(destination: ArtistDetailView(artist: artist)) {
+                            Button {
+                                selectedArtist = artist
+                            } label: {
                                 ArtistCard(artist: artist)
                             }
                             .buttonStyle(PlainButtonStyle())
+                            .id(artist.id)
                         }
-                        .padding(.horizontal, 8)
                     }
+                    .padding(.horizontal, 8)
                     .padding(.top, 10)
                     .padding(.bottom, 20)
+                }
+                .id(selection)
+                .navigationDestination(item: $selectedArtist) { artist in
+                    ArtistDetailView(spotifyId: artist.spotifyId, rank: artist.rank)
                 }
                 .navigationTitle("Top Artists")
                 .navigationBarTitleDisplayMode(.large)

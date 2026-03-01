@@ -52,7 +52,7 @@ struct Artist: Identifiable, Hashable {
 }
 
 struct Album: Identifiable, Hashable {
-    let id = UUID()
+    var id: String
     var images: [ImageResponse]
     var name: String
     var release_date: String

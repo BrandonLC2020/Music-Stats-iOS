@@ -30,6 +30,7 @@ struct TabUIView: View {
                 ProgressView()
             }
         }
+        .environmentObject(userTopItems)
         .onAppear {
             if let accessToken = authManager.accessToken, let tokenType = authManager.tokenType {
                 userTopItems.accessToken = accessToken

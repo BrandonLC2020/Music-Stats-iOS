@@ -56,8 +56,9 @@ struct ArtistCard: View {
                 Rectangle()
                     .foregroundColor(.gray.opacity(0.6))
             }
+            .clipped()
         )
         .cornerRadius(15.0)
-        .clipped()
+        .contentShape(Rectangle())
     }
 }

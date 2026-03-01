@@ -64,9 +64,10 @@ struct SongCard: View {
                 Rectangle()
                     .foregroundColor(.gray.opacity(0.6))
             }
+            .clipped()
         )
         // Clip the entire view (including the background) to have rounded corners.
         .cornerRadius(15.0)
-        .clipped()
+        .contentShape(Rectangle())
     }
 }
