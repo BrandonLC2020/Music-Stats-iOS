@@ -1,10 +1,10 @@
 # Music-Stats-iOS
 
-Music-Stats-iOS is a Swift-based iOS application that leverages the Spotify Web API to provide users with insightful statistics about their listening habits. Discover your top songs and artists across various timeframes and get a clearer picture of your musical journey.
+Music-Stats-iOS is a Swift-based iOS application that leverages the Spotify Web API to provide users with insightful statistics about their listening habits. Discover your top songs, albums, and artists across various timeframes and get a clearer picture of your musical journey.
 
 ## Introduction
 
-Have you ever wondered what your most-played songs and artists are over the last month, six months, or even several years? Music-Stats-iOS connects securely to your Spotify account to fetch and display this information in a clean, intuitive, and native iOS interface. This app is perfect for music enthusiasts who want to delve deeper into their listening patterns and rediscover their favorite tunes.
+Have you ever wondered what your most-played songs, albums, and artists are over the last month, six months, or even several years? Music-Stats-iOS connects securely to your Spotify account to fetch and display this information in a clean, intuitive, and native iOS interface. This app is perfect for music enthusiasts who want to delve deeper into their listening patterns and rediscover their favorite tunes.
 
 ## Demo
 
@@ -13,11 +13,12 @@ You can see screen recordings and screenshots of the app [here](https://brandonl
 ## Features
 
   * **Secure Spotify Authentication:** Utilizes a secure authorization flow to connect to your Spotify account.
-  * **Top Songs and Artists:** View your top 50 songs and artists from three different time ranges:
+  * **Top Songs, Albums, and Artists:** View your top items from three different time ranges:
       * Last Month (short\_term)
       * Last 6 Months (medium\_term)
       * All Time (long\_term)
-  * **Detailed Information:** See details like album art, artist names, and release dates for songs, and view artist images.
+  * **Custom Album Ranking:** Since Spotify doesn't provide a "Top Albums" endpoint, this app derives your top albums by analyzing your top 50 songs. Albums are ranked based on how many of your top songs they contain, with ties broken by the rank of those songs.
+  * **Detailed Information:** Explore deep details for every item, including high-resolution album art, track durations, popularity scores, and release information.
   * **Native iOS Experience:** Built with SwiftUI for a responsive and modern user experience.
   * **Persistent Login:** Securely stores your refresh token in the keychain, so you don't have to log in every time you open the app.
 
@@ -26,9 +27,12 @@ You can see screen recordings and screenshots of the app [here](https://brandonl
 1.  **Authorization:** The app initiates an authorization request to the Spotify API.
 2.  **User Login:** You will be prompted to log in to your Spotify account and grant permission for the app to access your top artists and tracks.
 3.  **Token Exchange:** Upon successful authorization, the app receives an authorization code, which it then exchanges for an access token and a refresh token.
-4.  **API Requests:** The access token is used to make secure requests to the Spotify API to fetch your top songs and artists.
-5.  **Data Display:** The fetched data is then parsed and displayed in the app's user-friendly interface.
-6.  **Token Refresh:** The refresh token is securely stored in the device's keychain and is used to obtain a new access token when the current one expires, ensuring a seamless user experience.
+4.  **Data Processing:** 
+    * The app fetches your top songs and artists directly from Spotify.
+    * **Top Albums** are then calculated locally by grouping your top songs by their parent album. If an album has two or more songs in your top tracks, it is included and ranked.
+5.  **API Requests:** The access token is used to make secure requests to the Spotify API to fetch your top items and additional metadata (like full album details).
+6.  **Data Display:** The fetched and calculated data is then parsed and displayed in the app's user-friendly interface.
+7.  **Token Refresh:** The refresh token is securely stored in the device's keychain and is used to obtain a new access token when the current one expires, ensuring a seamless user experience.
 
 ## Technologies Used
 
@@ -102,8 +106,8 @@ To use the Spotify Web API, you'll need to provide your own client ID and client
 
 1.  Launch the app on an iOS simulator or a physical device.
 2.  Tap the "Authorize" button to log in with your Spotify account.
-3.  Once authenticated, you will be taken to the main screen where you can view your top songs and artists.
-4.  Use the segmented control at the top to switch between different time ranges (Past Month, Past 6 Months, Past Years).
+3.  Once authenticated, you will be taken to the main screen where you can view your top songs, albums, and artists.
+4.  Use the calendar icon in the navigation bar to switch between different time ranges (Past Month, Past 6 Months, Past Years).
 
 ## License
 
