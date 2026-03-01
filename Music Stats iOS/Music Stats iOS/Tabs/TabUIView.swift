@@ -35,6 +35,7 @@ struct TabUIView: View {
             if let accessToken = authManager.accessToken, let tokenType = authManager.tokenType {
                 userTopItems.accessToken = accessToken
                 userTopItems.tokenType = tokenType
+                userTopItems.getUserProfile {}
                 userTopItems.getTopSongs {}
                 userTopItems.getTopArtists {}
             }

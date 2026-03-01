@@ -44,6 +44,7 @@ struct TopSongsView: View {
                             Image(systemName: "calendar")
                         }
                     }
+                    ProfileToolbarItem()
                 }
             } else {
                 VStack {

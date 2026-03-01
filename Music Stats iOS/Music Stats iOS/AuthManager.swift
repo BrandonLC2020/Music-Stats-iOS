@@ -32,6 +32,15 @@ class AuthManager: ObservableObject {
         exchangeCodeForTokens(code: code)
     }
 
+    func logout() {
+        self.accessToken = nil
+        self.tokenType = nil
+        keychain.delete("refreshToken")
+        DispatchQueue.main.async {
+            self.isAuthenticated = false
+        }
+    }
+
     func refreshToken() {
         guard let refreshToken = keychain.get("refreshToken") else {
             // If there's no refresh token, the user needs to log in

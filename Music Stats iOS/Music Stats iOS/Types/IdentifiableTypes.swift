@@ -58,6 +58,13 @@ struct Album: Identifiable, Hashable {
     var release_date: String
 }
 
+struct UserProfile: Identifiable, Hashable {
+    var id: String
+    var displayName: String?
+    var email: String?
+    var images: [ImageResponse]?
+}
+
 //struct Image: Identifiable {
 //    let id = UUID()
 //    var url: String

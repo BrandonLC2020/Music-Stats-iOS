@@ -55,6 +55,13 @@ struct ImageResponse: Codable, Hashable {
     var width: Int?
 }
 
+struct UserProfileResponse: Codable, Hashable {
+    var display_name: String?
+    var email: String?
+    var images: [ImageResponse]?
+    var id: String
+}
+
 struct AccessTokenResponse: Codable {
     let access_token: String
     let token_type: String

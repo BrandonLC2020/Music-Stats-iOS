@@ -13,6 +13,7 @@ class UserTopItems: ObservableObject {
     @Published var topArtistsResponse: [String : [ArtistResponse]]
     @Published var topSongsList: [String : [Song]]
     @Published var topArtistsList: [String : [Artist]]
+    @Published var userProfile: UserProfile?
     var accessToken: String
     var tokenType: String
     
@@ -21,8 +22,44 @@ class UserTopItems: ObservableObject {
         self.topArtistsResponse = [:]
         self.topSongsList = [:]
         self.topArtistsList = [:]
+        self.userProfile = nil
         self.accessToken = ""
         self.tokenType = ""
+    }
+    
+    func getUserProfile(completion: @escaping () -> Void) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.spotify.com"
+        components.path = "/v1/me"
+        
+        guard let url = components.url else {
+            completion()
+            return
+        }
+        
+        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = requestHeaders
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data, error == nil else {
+                completion()
+                return
+            }
+            
+            do {
+                let responseObject = try JSONDecoder().decode(UserProfileResponse.self, from: data)
+                DispatchQueue.main.async {
+                    self.userProfile = UserProfile(id: responseObject.id, displayName: responseObject.display_name, email: responseObject.email, images: responseObject.images)
+                    completion()
+                }
+            } catch {
+                print("Error fetching user profile: \(error)")
+                completion()
+            }
+        }.resume()
     }
     
     func getTopSongs(completion: @escaping () -> Void) {

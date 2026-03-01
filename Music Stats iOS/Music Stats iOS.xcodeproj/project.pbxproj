@@ -13,6 +13,7 @@
 		71D4C5C62F534CB1008D372F /* SongDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4C5C52F534CB1008D372F /* SongDetailView.swift */; };
 		71D4C5C82F534CBD008D372F /* ArtistDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4C5C72F534CBD008D372F /* ArtistDetailView.swift */; };
 		71D4C5CA2F534CD6008D372F /* DetailRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4C5C92F534CD6008D372F /* DetailRow.swift */; };
+		71D4C5CC2F53CDA0008D372F /* ProfileToolbarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D4C5CB2F53CDA0008D372F /* ProfileToolbarItem.swift */; };
 		CA0E11952B347B9500792E68 /* ArtistCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E11942B347B9500792E68 /* ArtistCard.swift */; };
 		CA3A7A5D2C472EFC0064F3DC /* Music_Stats_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEBBA2C2AE74B2B00ABE21B /* Music_Stats_iOSApp.swift */; };
 		CA6BBC712AE8554000CB99EC /* TabUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6BBC702AE8554000CB99EC /* TabUIView.swift */; };
@@ -53,6 +54,7 @@
 		71D4C5C52F534CB1008D372F /* SongDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailView.swift; sourceTree = "<group>"; };
 		71D4C5C72F534CBD008D372F /* ArtistDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistDetailView.swift; sourceTree = "<group>"; };
 		71D4C5C92F534CD6008D372F /* DetailRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRow.swift; sourceTree = "<group>"; };
+		71D4C5CB2F53CDA0008D372F /* ProfileToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileToolbarItem.swift; sourceTree = "<group>"; };
 		71E379202CE526900016B8A8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		CA0E11942B347B9500792E68 /* ArtistCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistCard.swift; sourceTree = "<group>"; };
 		CA265FF42C49576A00C1B3DB /* Sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Sample.xcconfig; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				71E379202CE526900016B8A8 /* Config.xcconfig */,
 				CAEBD65A2AF458890086B01D /* UserTopItems.swift */,
 				71D4C5C92F534CD6008D372F /* DetailRow.swift */,
+				71D4C5CB2F53CDA0008D372F /* ProfileToolbarItem.swift */,
 			);
 			path = "Music Stats iOS";
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				71C478832E3D861C00BBCF6E /* AuthManager.swift in Sources */,
 				CAEBD6592AF428420086B01D /* AuthorizationView.swift in Sources */,
 				CA9CA59E2AEB33A100794277 /* IdentifiableTypes.swift in Sources */,
+				71D4C5CC2F53CDA0008D372F /* ProfileToolbarItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

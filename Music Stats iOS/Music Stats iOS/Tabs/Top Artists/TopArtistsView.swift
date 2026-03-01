@@ -44,6 +44,7 @@ struct TopArtistsView: View {
                             Image(systemName: "calendar")
                         }
                     }
+                    ProfileToolbarItem()
                 }
             } else {
                 VStack {
