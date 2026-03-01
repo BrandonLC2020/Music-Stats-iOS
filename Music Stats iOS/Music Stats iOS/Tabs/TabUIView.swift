@@ -21,6 +21,11 @@ struct TabUIView: View {
                         Image(systemName: "music.note")
                         Text("Top Songs")
                     }
+                TopAlbumsView(userTopItems: userTopItems)
+                    .tabItem {
+                        Image(systemName: "square.stack")
+                        Text("Top Albums")
+                    }
                 TopArtistsView(userTopItems: userTopItems)
                     .tabItem {
                         Image(systemName: "music.mic")

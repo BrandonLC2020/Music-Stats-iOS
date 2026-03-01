@@ -53,8 +53,11 @@ struct Artist: Identifiable, Hashable {
 
 struct Album: Identifiable, Hashable {
     var id: String
+    var spotifyId: String? // Added this for consistency with other types
+    var rank: Int?
     var images: [ImageResponse]
     var name: String
+    var artists: [Artist]? // Added this to store album artists
     var release_date: String
 }
 

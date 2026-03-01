@@ -13,6 +13,7 @@ class UserTopItems: ObservableObject {
     @Published var topArtistsResponse: [String : [ArtistResponse]]
     @Published var topSongsList: [String : [Song]]
     @Published var topArtistsList: [String : [Artist]]
+    @Published var topAlbumsList: [String : [Album]]
     @Published var userProfile: UserProfile?
     var accessToken: String
     var tokenType: String
@@ -22,6 +23,7 @@ class UserTopItems: ObservableObject {
         self.topArtistsResponse = [:]
         self.topSongsList = [:]
         self.topArtistsList = [:]
+        self.topAlbumsList = [:]
         self.userProfile = nil
         self.accessToken = ""
         self.tokenType = ""
@@ -75,7 +77,7 @@ class UserTopItems: ObservableObject {
                         self.topSongsResponse[key] = songsResponse.items
                         
                         self.topSongsList[key] = songsResponse.items.enumerated().map { (index, songResponse) in
-                            let album = Album(id: songResponse.album.id, images: songResponse.album.images, name: songResponse.album.name, release_date: songResponse.album.release_date)
+                            let album = Album(id: songResponse.album.id, spotifyId: songResponse.album.id, rank: nil, images: songResponse.album.images, name: songResponse.album.name, artists: songResponse.artists.map { Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }, release_date: songResponse.album.release_date)
                             let rank = index + 1
                             let artists = songResponse.artists.map { Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }
                             return Song(id: "\(key)-\(rank)-\(songResponse.id)", spotifyId: songResponse.id, rank: rank, album: album, artists: artists, duration_ms: songResponse.duration_ms, name: songResponse.name, popularity: songResponse.popularity)
@@ -87,6 +89,7 @@ class UserTopItems: ObservableObject {
         }
         
         group.notify(queue: .main) {
+            self.calculateTopAlbums()
             completion()
         }
     }
@@ -115,6 +118,56 @@ class UserTopItems: ObservableObject {
         
         group.notify(queue: .main) {
             completion()
+        }
+    }
+    
+    private func calculateTopAlbums() {
+        let keys = ["short", "medium", "long"]
+        for key in keys {
+            guard let songs = topSongsList[key] else {
+                self.topAlbumsList[key] = []
+                continue
+            }
+            
+            // Group songs by album ID
+            var albumToSongs: [String: [Song]] = [:]
+            for song in songs {
+                albumToSongs[song.album.id, default: []].append(song)
+            }
+            
+            // Filter: "if there's more than one top song with a shared album, include it on top albums"
+            let filteredAlbums = albumToSongs.filter { $1.count > 1 }
+            
+            // Sort by:
+            // 1. Number of songs in top tracks (descending)
+            // 2. Rank of the highest song (ascending - lower is better)
+            let sortedAlbumIds = filteredAlbums.keys.sorted { id1, id2 in
+                let songs1 = filteredAlbums[id1]!
+                let songs2 = filteredAlbums[id2]!
+                
+                if songs1.count != songs2.count {
+                    return songs1.count > songs2.count
+                }
+                
+                let bestRank1 = songs1.compactMap { $0.rank }.min() ?? Int.max
+                let bestRank2 = songs2.compactMap { $0.rank }.min() ?? Int.max
+                
+                return bestRank1 < bestRank2
+            }
+            
+            self.topAlbumsList[key] = sortedAlbumIds.enumerated().map { index, albumId in
+                let songs = filteredAlbums[albumId]!
+                let firstSong = songs[0] // Representative song to get album details
+                return Album(
+                    id: "\(key)-\(index + 1)-\(albumId)",
+                    spotifyId: albumId,
+                    rank: index + 1,
+                    images: firstSong.album.images,
+                    name: firstSong.album.name,
+                    artists: firstSong.artists,
+                    release_date: firstSong.album.release_date
+                )
+            }
         }
     }
     
@@ -290,12 +343,44 @@ class UserTopItems: ObservableObject {
         }.resume()
     }
 
+    func getAlbum(id: String, userCompletionHandler: @escaping (AlbumResponse?) -> Void) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.spotify.com"
+        components.path = "/v1/albums/\(id)"
+
+        guard let url = components.url else {
+            userCompletionHandler(nil)
+            return
+        }
+
+        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.allHTTPHeaderFields = requestHeaders
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                userCompletionHandler(nil)
+                return
+            }
+            do {
+                let album = try JSONDecoder().decode(AlbumResponse.self, from: data)
+                userCompletionHandler(album)
+            } catch {
+                print("Error decoding album: \(error)")
+                userCompletionHandler(nil)
+            }
+        }.resume()
+    }
+
     func reset() {
         DispatchQueue.main.async {
             self.topSongsResponse = [:]
             self.topArtistsResponse = [:]
             self.topSongsList = [:]
             self.topArtistsList = [:]
+            self.topAlbumsList = [:]
             self.userProfile = nil
             self.accessToken = ""
             self.tokenType = ""
