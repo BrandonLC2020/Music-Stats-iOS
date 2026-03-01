@@ -21,6 +21,7 @@ struct ProfileToolbarItem: ToolbarContent {
                 }
                 
                 Button(role: .destructive) {
+                    userTopItems.reset()
                     authManager.logout()
                 } label: {
                     Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")

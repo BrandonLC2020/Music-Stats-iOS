@@ -289,4 +289,16 @@ class UserTopItems: ObservableObject {
             }
         }.resume()
     }
+
+    func reset() {
+        DispatchQueue.main.async {
+            self.topSongsResponse = [:]
+            self.topArtistsResponse = [:]
+            self.topSongsList = [:]
+            self.topArtistsList = [:]
+            self.userProfile = nil
+            self.accessToken = ""
+            self.tokenType = ""
+        }
+    }
 }

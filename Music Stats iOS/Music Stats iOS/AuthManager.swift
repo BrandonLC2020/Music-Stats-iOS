@@ -35,7 +35,7 @@ class AuthManager: ObservableObject {
     func logout() {
         self.accessToken = nil
         self.tokenType = nil
-        keychain.delete("refreshToken")
+        keychain.clear()
         DispatchQueue.main.async {
             self.isAuthenticated = false
         }
