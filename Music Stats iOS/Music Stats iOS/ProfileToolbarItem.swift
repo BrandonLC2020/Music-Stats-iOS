@@ -11,9 +11,9 @@ struct ProfileToolbarItem: ToolbarContent {
             Menu {
                 if let profile = userTopItems.userProfile {
                     Section {
-                        Text(profile.displayName ?? "No Name")
+                        Text("Name: \(profile.displayName ?? "No Name")")
                         if let email = profile.email {
-                            Text(email)
+                            Text("Email: \(email)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
