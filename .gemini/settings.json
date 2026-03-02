@@ -6,5 +6,39 @@
         "mcpbridge"
       ]
     }
+  },
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "BuildProject|RunAllTests|RunSomeTests",
+        "hooks": [
+          {
+            "name": "config-validation",
+            "type": "command",
+            "command": "sh .gemini/hooks/config-validation.sh",
+            "description": "Checks for Config.xcconfig before building or testing."
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "write_file|replace|XcodeWrite|XcodeUpdate",
+        "hooks": [
+          {
+            "name": "secret-detection",
+            "type": "command",
+            "command": "sh .gemini/hooks/secret-detection.sh",
+            "description": "Scans for hardcoded secrets after file changes."
+          },
+          {
+            "name": "build-validation",
+            "type": "command",
+            "command": "sh .gemini/hooks/build-validation.sh",
+            "description": "Validates the build after file changes."
+          }
+        ]
+      }
+    ]
   }
 }
