@@ -6,7 +6,7 @@ struct AlbumDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
     let spotifyId: String
     let rank: Int?
-    
+
     @State private var album: AlbumResponse?
     @State private var isLoading = true
 
@@ -49,8 +49,8 @@ struct AlbumDetailView: View {
 
                     // 4. Details Section
                     VStack(alignment: .leading, spacing: 12) {
-                        DetailRow(label: "Release Date", value: album.release_date)
-                        if let totalTracks = album.total_tracks {
+                        DetailRow(label: "Release Date", value: album.releaseDate)
+                        if let totalTracks = album.totalTracks {
                             DetailRow(label: "Total Tracks", value: "\(totalTracks)")
                         }
                         if let label = album.label {
@@ -80,7 +80,7 @@ struct AlbumDetailView: View {
             fetchAlbumDetails()
         }
     }
-    
+
     private func fetchAlbumDetails() {
         userTopItems.getAlbum(id: spotifyId) { response in
             DispatchQueue.main.async {

@@ -6,7 +6,7 @@ struct ArtistDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
     let spotifyId: String
     let rank: Int?
-    
+
     @State private var artist: ArtistResponse?
     @State private var isLoading = true
 
@@ -71,7 +71,7 @@ struct ArtistDetailView: View {
             fetchArtistDetails()
         }
     }
-    
+
     private func fetchArtistDetails() {
         userTopItems.getArtist(id: spotifyId) { response in
             DispatchQueue.main.async {

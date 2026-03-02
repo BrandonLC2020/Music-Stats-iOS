@@ -5,7 +5,7 @@ import SwiftUI
 struct ProfileToolbarItem: ToolbarContent {
     @EnvironmentObject var authManager: AuthManager
     @EnvironmentObject var userTopItems: UserTopItems
-    
+
     var body: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
             Menu {
@@ -19,7 +19,7 @@ struct ProfileToolbarItem: ToolbarContent {
                         }
                     }
                 }
-                
+
                 Button(role: .destructive) {
                     userTopItems.reset()
                     authManager.logout()

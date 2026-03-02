@@ -51,75 +51,22 @@ class AuthManager: ObservableObject {
             return
         }
 
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "accounts.spotify.com"
-        components.path = "/api/token"
-
-        var urlRequest = URLRequest(url: components.url!)
-        urlRequest.httpMethod = "POST"
-
-        let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
-        let SPOTIFY_API_CLIENT_SECRET = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET") as? String
-
-        let combo = "\(SPOTIFY_API_CLIENT_ID ?? ""):\(SPOTIFY_API_CLIENT_SECRET ?? "")"
-        let comboEncoded = combo.data(using: .utf8)?.base64EncodedString()
-
-        urlRequest.allHTTPHeaderFields = ["Authorization" : "Basic \(comboEncoded!)", "Content-Type" : "application/x-www-form-urlencoded"]
-
+        let urlRequest = createTokenURLRequest()
         var bodyComponents = URLComponents()
         bodyComponents.queryItems = [
             URLQueryItem(name: "grant_type", value: "refresh_token"),
             URLQueryItem(name: "refresh_token", value: refreshToken)
         ]
 
-        urlRequest.httpBody = bodyComponents.query?.data(using: .utf8)
+        var request = urlRequest
+        request.httpBody = bodyComponents.query?.data(using: .utf8)
 
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("Error refreshing token: \(error.localizedDescription)")
-                    self.isAuthenticated = false
-                    self.isLoading = false
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    print("Invalid response when refreshing token")
-                    self.isAuthenticated = false
-                    self.isLoading = false
-                    return
-                }
-
-                if (200...299).contains(httpResponse.statusCode) {
-                    if let data = data,
-                       let accessTokenResponse = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) {
-
-                        self.accessToken = accessTokenResponse.access_token
-                        self.tokenType = accessTokenResponse.token_type
-
-                        if let newRefreshToken = accessTokenResponse.refresh_token {
-                            self.keychain.set(newRefreshToken, forKey: "refreshToken")
-                        }
-
-                        self.isAuthenticated = true
-                    } else {
-                        self.isAuthenticated = false
-                    }
-                } else {
-                    print("Error refreshing token. Status code: \(httpResponse.statusCode)")
-                    if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                        print("Response body: \(responseString)")
-                    }
-                    self.isAuthenticated = false
-                }
-
-                self.isLoading = false
-            }
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            self.handleTokenResponse(data: data, response: response, error: error)
         }.resume()
     }
 
-    private func exchangeCodeForTokens(code: String) {
+    private func createTokenURLRequest() -> URLRequest {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "accounts.spotify.com"
@@ -128,17 +75,61 @@ class AuthManager: ObservableObject {
         var urlRequest = URLRequest(url: components.url!)
         urlRequest.httpMethod = "POST"
 
-        let SPOTIFY_API_CLIENT_ID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
-        let SPOTIFY_API_CLIENT_SECRET = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET") as? String
+        let spotifyClientID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
+        let spotifyClientSecret = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_SECRET") as? String
 
-        let combo = "\(SPOTIFY_API_CLIENT_ID ?? ""):\(SPOTIFY_API_CLIENT_SECRET ?? "")"
+        let combo = "\(spotifyClientID ?? ""):\(spotifyClientSecret ?? "")"
         let comboEncoded = combo.data(using: .utf8)?.base64EncodedString()
 
-        urlRequest.allHTTPHeaderFields = ["Authorization" : "Basic \(comboEncoded!)", "Content-Type" : "application/x-www-form-urlencoded"]
+        urlRequest.allHTTPHeaderFields = [
+            "Authorization": "Basic \(comboEncoded!)",
+            "Content-Type": "application/x-www-form-urlencoded"
+        ]
+        return urlRequest
+    }
 
-        let REDIRECT_URI_HOST = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
-        let REDIRECT_URI_SCHEME = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_SCHEME") as? String
-        let redirectURI = "\(REDIRECT_URI_SCHEME ?? "")://\(REDIRECT_URI_HOST ?? "")"
+    private func handleTokenResponse(data: Data?, response: URLResponse?, error: Error?) {
+        DispatchQueue.main.async {
+            if let error = error {
+                print("Error refreshing token: \(error.localizedDescription)")
+                self.isAuthenticated = false
+                self.isLoading = false
+                return
+            }
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Invalid response when refreshing token")
+                self.isAuthenticated = false
+                self.isLoading = false
+                return
+            }
+
+            if (200...299).contains(httpResponse.statusCode) {
+                if let data = data,
+                   let accessTokenResponse = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) {
+                    self.accessToken = accessTokenResponse.accessToken
+                    self.tokenType = accessTokenResponse.tokenType
+                    if let newRefreshToken = accessTokenResponse.refreshToken {
+                        self.keychain.set(newRefreshToken, forKey: "refreshToken")
+                    }
+                    self.isAuthenticated = true
+                } else {
+                    self.isAuthenticated = false
+                }
+            } else {
+                print("Error refreshing token. Status code: \(httpResponse.statusCode)")
+                self.isAuthenticated = false
+            }
+            self.isLoading = false
+        }
+    }
+
+    private func exchangeCodeForTokens(code: String) {
+        let urlRequest = createTokenURLRequest()
+
+        let redirectURIHost = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
+        let redirectURIScheme = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_SCHEME") as? String
+        let redirectURI = "\(redirectURIScheme ?? "")://\(redirectURIHost ?? "")"
 
         var bodyComponents = URLComponents()
         bodyComponents.queryItems = [
@@ -147,17 +138,17 @@ class AuthManager: ObservableObject {
             URLQueryItem(name: "redirect_uri", value: redirectURI)
         ]
 
-        urlRequest.httpBody = bodyComponents.query?.data(using: .utf8)
+        var request = urlRequest
+        request.httpBody = bodyComponents.query?.data(using: .utf8)
 
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, _ in
             DispatchQueue.main.async {
                 self.isLoading = false
                 if let data = data,
                    let accessTokenResponse = try? JSONDecoder().decode(AccessTokenResponse.self, from: data) {
-
-                    self.accessToken = accessTokenResponse.access_token
-                    self.tokenType = accessTokenResponse.token_type
-                    if let refreshToken = accessTokenResponse.refresh_token {
+                    self.accessToken = accessTokenResponse.accessToken
+                    self.tokenType = accessTokenResponse.tokenType
+                    if let refreshToken = accessTokenResponse.refreshToken {
                         self.keychain.set(refreshToken, forKey: "refreshToken")
                     }
                     self.isAuthenticated = true

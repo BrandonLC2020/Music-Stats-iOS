@@ -7,17 +7,16 @@
 
 import Foundation
 
-
 class UserTopItems: ObservableObject {
-    @Published var topSongsResponse: [String : [SongResponse]]
-    @Published var topArtistsResponse: [String : [ArtistResponse]]
-    @Published var topSongsList: [String : [Song]]
-    @Published var topArtistsList: [String : [Artist]]
-    @Published var topAlbumsList: [String : [Album]]
+    @Published var topSongsResponse: [String: [SongResponse]]
+    @Published var topArtistsResponse: [String: [ArtistResponse]]
+    @Published var topSongsList: [String: [Song]]
+    @Published var topArtistsList: [String: [Artist]]
+    @Published var topAlbumsList: [String: [Album]]
     @Published var userProfile: UserProfile?
     var accessToken: String
     var tokenType: String
-    
+
     init() {
         self.topSongsResponse = [:]
         self.topArtistsResponse = [:]
@@ -28,33 +27,38 @@ class UserTopItems: ObservableObject {
         self.accessToken = ""
         self.tokenType = ""
     }
-    
+
     func getUserProfile(completion: @escaping () -> Void) {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
         components.path = "/v1/me"
-        
+
         guard let url = components.url else {
             completion()
             return
         }
-        
-        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+
+        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+
+        URLSession.shared.dataTask(with: request) { (data, _, error) in
             guard let data = data, error == nil else {
                 completion()
                 return
             }
-            
+
             do {
                 let responseObject = try JSONDecoder().decode(UserProfileResponse.self, from: data)
                 DispatchQueue.main.async {
-                    self.userProfile = UserProfile(id: responseObject.id, displayName: responseObject.display_name, email: responseObject.email, images: responseObject.images)
+                    self.userProfile = UserProfile(
+                        id: responseObject.id,
+                        displayName: responseObject.displayName,
+                        email: responseObject.email,
+                        images: responseObject.images
+                    )
                     completion()
                 }
             } catch {
@@ -63,11 +67,11 @@ class UserTopItems: ObservableObject {
             }
         }.resume()
     }
-    
+
     func getTopSongs(completion: @escaping () -> Void) {
         let ranges = ["short_term", "medium_term", "long_term"]
         let group = DispatchGroup()
-        
+
         for range in ranges {
             let key = range.components(separatedBy: "_")[0]
             group.enter()
@@ -75,29 +79,50 @@ class UserTopItems: ObservableObject {
                 if let songsResponse = songsResponse {
                     DispatchQueue.main.async {
                         self.topSongsResponse[key] = songsResponse.items
-                        
+
                         self.topSongsList[key] = songsResponse.items.enumerated().map { (index, songResponse) in
-                            let album = Album(id: songResponse.album.id, spotifyId: songResponse.album.id, rank: nil, images: songResponse.album.images, name: songResponse.album.name, artists: songResponse.artists.map { Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }, release_date: songResponse.album.release_date)
+                            let album = Album(
+                                id: songResponse.album.id,
+                                spotifyId: songResponse.album.id,
+                                rank: nil,
+                                images: songResponse.album.images,
+                                name: songResponse.album.name,
+                                artists: songResponse.artists.map {
+                                    Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
+                                },
+                                releaseDate: songResponse.album.releaseDate
+                            )
                             let rank = index + 1
-                            let artists = songResponse.artists.map { Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name) }
-                            return Song(id: "\(key)-\(rank)-\(songResponse.id)", spotifyId: songResponse.id, rank: rank, album: album, artists: artists, duration_ms: songResponse.duration_ms, name: songResponse.name, popularity: songResponse.popularity)
+                            let artists = songResponse.artists.map {
+                                Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
+                            }
+                            return Song(
+                                id: "\(key)-\(rank)-\(songResponse.id)",
+                                spotifyId: songResponse.id,
+                                rank: rank,
+                                album: album,
+                                artists: artists,
+                                durationMs: songResponse.durationMs,
+                                name: songResponse.name,
+                                popularity: songResponse.popularity
+                            )
                         }
                     }
                 }
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             self.calculateTopAlbums()
             completion()
         }
     }
-    
+
     func getTopArtists(completion: @escaping () -> Void) {
         let ranges = ["short_term", "medium_term", "long_term"]
         let group = DispatchGroup()
-        
+
         for range in ranges {
             let key = range.components(separatedBy: "_")[0]
             group.enter()
@@ -105,22 +130,30 @@ class UserTopItems: ObservableObject {
                 if let artistsResponse = artistsResponse {
                     DispatchQueue.main.async {
                         self.topArtistsResponse[key] = artistsResponse.items
-                        
+
                         self.topArtistsList[key] = artistsResponse.items.enumerated().map { (index, artistResponse) in
                             let rank = index + 1
-                            return Artist(id: "\(key)-\(rank)-\(artistResponse.id)", spotifyId: artistResponse.id, rank: rank, images: artistResponse.images, name: artistResponse.name, popularity: artistResponse.popularity, genres: artistResponse.genres)
+                            return Artist(
+                                id: "\(key)-\(rank)-\(artistResponse.id)",
+                                spotifyId: artistResponse.id,
+                                rank: rank,
+                                images: artistResponse.images,
+                                name: artistResponse.name,
+                                popularity: artistResponse.popularity,
+                                genres: artistResponse.genres
+                            )
                         }
                     }
                 }
                 group.leave()
             }
         }
-        
+
         group.notify(queue: .main) {
             completion()
         }
     }
-    
+
     private func calculateTopAlbums() {
         let keys = ["short", "medium", "long"]
         for key in keys {
@@ -128,33 +161,33 @@ class UserTopItems: ObservableObject {
                 self.topAlbumsList[key] = []
                 continue
             }
-            
+
             // Group songs by album ID
             var albumToSongs: [String: [Song]] = [:]
             for song in songs {
                 albumToSongs[song.album.id, default: []].append(song)
             }
-            
+
             // Filter: "if there's more than one top song with a shared album, include it on top albums"
             let filteredAlbums = albumToSongs.filter { $1.count > 1 }
-            
+
             // Sort by:
             // 1. Number of songs in top tracks (descending)
             // 2. Rank of the highest song (ascending - lower is better)
             let sortedAlbumIds = filteredAlbums.keys.sorted { id1, id2 in
                 let songs1 = filteredAlbums[id1]!
                 let songs2 = filteredAlbums[id2]!
-                
+
                 if songs1.count != songs2.count {
                     return songs1.count > songs2.count
                 }
-                
+
                 let bestRank1 = songs1.compactMap { $0.rank }.min() ?? Int.max
                 let bestRank2 = songs2.compactMap { $0.rank }.min() ?? Int.max
-                
+
                 return bestRank1 < bestRank2
             }
-            
+
             self.topAlbumsList[key] = sortedAlbumIds.enumerated().map { index, albumId in
                 let songs = filteredAlbums[albumId]!
                 let firstSong = songs[0] // Representative song to get album details
@@ -165,12 +198,12 @@ class UserTopItems: ObservableObject {
                     images: firstSong.album.images,
                     name: firstSong.album.name,
                     artists: firstSong.artists,
-                    release_date: firstSong.album.release_date
+                    releaseDate: firstSong.album.releaseDate
                 )
             }
         }
     }
-    
+
     func getSongsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopSongsResponse?) -> Void) {
         var components = URLComponents()
         components.scheme = "https"
@@ -181,15 +214,17 @@ class UserTopItems: ObservableObject {
             URLQueryItem(name: "limit", value: "50"),
             URLQueryItem(name: "offset", value: String(offset))
         ]
-        
+
         guard let url = components.url else {
             userCompletionHandler(nil)
             return
         }
-        
+
         let authorizationAccessTokenStr = accessToken
         let authorizationTokenTypeStr = tokenType
-        let requestHeaders: [String:String] = ["Authorization" : "\(authorizationTokenTypeStr) \(authorizationAccessTokenStr)"]
+        let requestHeaders: [String: String] = [
+            "Authorization": "\(authorizationTokenTypeStr) \(authorizationAccessTokenStr)"
+        ]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
@@ -203,7 +238,7 @@ class UserTopItems: ObservableObject {
                 userCompletionHandler(nil)
                 return
             }
-            
+
             guard (200 ... 299) ~= response.statusCode else {
                 print("statusCode should be 2xx, but is \(response.statusCode)")
                 print("response = \(response)")
@@ -213,7 +248,7 @@ class UserTopItems: ObservableObject {
             do {
                 let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
                 userCompletionHandler(responseObject)
-                
+
             } catch {
                 print(error) // parsing error
                 if let responseString = String(data: data, encoding: .utf8) {
@@ -225,9 +260,12 @@ class UserTopItems: ObservableObject {
             }
         }).resume()
     }
-    
-    func getArtistsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopArtistsResponse?) -> Void) {
-        
+
+    func getArtistsForTimeRange(
+        range: String,
+        offset: Int,
+        userCompletionHandler: @escaping (TopArtistsResponse?) -> Void
+    ) {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
@@ -237,7 +275,7 @@ class UserTopItems: ObservableObject {
             URLQueryItem(name: "limit", value: "50"),
             URLQueryItem(name: "offset", value: String(offset))
         ]
-        
+
         guard let url = components.url else {
             userCompletionHandler(nil)
             return
@@ -245,7 +283,9 @@ class UserTopItems: ObservableObject {
 
         let authorizationAccessTokenStr = accessToken
         let authorizationTokenTypeStr = tokenType
-        let requestHeaders: [String:String] = ["Authorization" : authorizationTokenTypeStr + " " + authorizationAccessTokenStr]
+        let requestHeaders: [String: String] = [
+            "Authorization": authorizationTokenTypeStr + " " + authorizationAccessTokenStr
+        ]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
@@ -259,7 +299,7 @@ class UserTopItems: ObservableObject {
                 userCompletionHandler(nil)
                 return
             }
-            
+
             guard (200 ... 299) ~= response.statusCode else {
                 print("statusCode should be 2xx, but is \(response.statusCode)")
                 print("response = \(response)")
@@ -281,6 +321,22 @@ class UserTopItems: ObservableObject {
         }).resume()
     }
 
+    func reset() {
+        DispatchQueue.main.async {
+            self.topSongsResponse = [:]
+            self.topArtistsResponse = [:]
+            self.topSongsList = [:]
+            self.topArtistsList = [:]
+            self.topAlbumsList = [:]
+            self.userProfile = nil
+            self.accessToken = ""
+            self.tokenType = ""
+        }
+    }
+}
+
+// MARK: - Individual Item Fetching
+extension UserTopItems {
     func getTrack(id: String, userCompletionHandler: @escaping (SongResponse?) -> Void) {
         var components = URLComponents()
         components.scheme = "https"
@@ -292,12 +348,12 @@ class UserTopItems: ObservableObject {
             return
         }
 
-        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             guard let data = data, error == nil else {
                 userCompletionHandler(nil)
                 return
@@ -323,12 +379,12 @@ class UserTopItems: ObservableObject {
             return
         }
 
-        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             guard let data = data, error == nil else {
                 userCompletionHandler(nil)
                 return
@@ -354,12 +410,12 @@ class UserTopItems: ObservableObject {
             return
         }
 
-        let requestHeaders: [String:String] = ["Authorization" : "\(tokenType) \(accessToken)"]
+        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = requestHeaders
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             guard let data = data, error == nil else {
                 userCompletionHandler(nil)
                 return
@@ -372,18 +428,5 @@ class UserTopItems: ObservableObject {
                 userCompletionHandler(nil)
             }
         }.resume()
-    }
-
-    func reset() {
-        DispatchQueue.main.async {
-            self.topSongsResponse = [:]
-            self.topArtistsResponse = [:]
-            self.topSongsList = [:]
-            self.topArtistsList = [:]
-            self.topAlbumsList = [:]
-            self.userProfile = nil
-            self.accessToken = ""
-            self.tokenType = ""
-        }
     }
 }

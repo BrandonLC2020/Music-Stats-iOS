@@ -48,10 +48,9 @@ struct WebView: UIViewRepresentable {
             // result is optional
             if codeValue == nil {
                 print("Key code not found")
-            }
-            else {
+            } else {
                 // tadaa, here is the key value
-                //print("Value of code: \(codeValue!)")
+                // print("Value of code: \(codeValue!)")
             }
             return codeValue
         }
@@ -67,10 +66,9 @@ struct WebView: UIViewRepresentable {
             // result is optional
             if stateValue == nil {
                 print("Key state not found")
-            }
-            else {
+            } else {
                 // tadaa, here is the key value
-                //print("Value of state: \(stateValue!)")
+                // print("Value of state: \(stateValue!)")
             }
             return stateValue
         }
@@ -96,12 +94,12 @@ struct WebView: UIViewRepresentable {
         // This setup method is still the most reliable place to attach the observer
         func setupObserver(for webView: WKWebView) {
             if urlObserver == nil {
-                urlObserver = webView.observe(\.url, options: .new) { [weak self] webView, change in
+                urlObserver = webView.observe(\.url, options: .new) { [weak self] webView, _ in
                     guard let self = self, let url = webView.url, !self.didFindCode else { return }
 
-                    let REDIRECT_URI_HOST = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
-                    let REDIRECT_URI_SCHEME = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_SCHEME") as? String
-                    let baseRedirectURI = "\(REDIRECT_URI_SCHEME ?? "")://\(REDIRECT_URI_HOST ?? "")"
+                    let redirectURIHost = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
+                    let redirectURIScheme = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_SCHEME") as? String
+                    let baseRedirectURI = "\(redirectURIScheme ?? "")://\(redirectURIHost ?? "")"
 
                     // STEP 1: Detect the redirect URL.
                     if url.absoluteString.starts(with: baseRedirectURI) {
@@ -124,7 +122,8 @@ struct WebView: UIViewRepresentable {
                 self.isAwaitingFinalLoad = false // Reset the flag.
 
                 // Now that the page has rendered, we can safely parse the code and dismiss.
-                guard let url = webView.url, let code = self.parent.getCodeFromURL(urlString: url.absoluteString) else { return }
+                guard let url = webView.url,
+                      let code = self.parent.getCodeFromURL(urlString: url.absoluteString) else { return }
 
                 DispatchQueue.main.async {
                     self.parent.authManager.logIn(with: code)
@@ -135,7 +134,11 @@ struct WebView: UIViewRepresentable {
         }
 
         // This delegate is still needed to allow navigation to proceed.
-        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction,
+            decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        ) {
             decisionHandler(.allow)
         }
 
@@ -144,7 +147,6 @@ struct WebView: UIViewRepresentable {
         }
     }
 }
-
 
 struct AuthorizationView: View {
 

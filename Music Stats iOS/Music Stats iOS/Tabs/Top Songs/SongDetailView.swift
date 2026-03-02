@@ -6,7 +6,7 @@ struct SongDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
     let spotifyId: String
     let rank: Int?
-    
+
     @State private var song: SongResponse?
     @State private var isLoading = true
 
@@ -14,8 +14,8 @@ struct SongDetailView: View {
         return artists.map { $0.name }.joined(separator: ", ")
     }
 
-    private func formatDuration(ms: Int) -> String {
-        let totalSeconds = ms / 1000
+    private func formatDuration(ms duration: Int) -> String {
+        let totalSeconds = duration / 1000
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
@@ -57,8 +57,8 @@ struct SongDetailView: View {
                     // 4. Details Section
                     VStack(alignment: .leading, spacing: 12) {
                         DetailRow(label: "Album", value: song.album.name)
-                        DetailRow(label: "Release Date", value: song.album.release_date)
-                        DetailRow(label: "Duration", value: formatDuration(ms: song.duration_ms))
+                        DetailRow(label: "Release Date", value: song.album.releaseDate)
+                        DetailRow(label: "Duration", value: formatDuration(ms: song.durationMs))
                         DetailRow(label: "Popularity", value: "\(song.popularity)/100")
                         if let rank = rank {
                             DetailRow(label: "Rank", value: "#\(rank)")
@@ -81,7 +81,7 @@ struct SongDetailView: View {
             fetchTrackDetails()
         }
     }
-    
+
     private func fetchTrackDetails() {
         userTopItems.getTrack(id: spotifyId) { response in
             DispatchQueue.main.async {
@@ -91,10 +91,10 @@ struct SongDetailView: View {
         }
     }
 }
+
 struct SongDetailView_Previews: PreviewProvider {
     static var previews: some View {
         SongDetailView(spotifyId: "testId", rank: 1)
             .environmentObject(UserTopItems())
     }
 }
-

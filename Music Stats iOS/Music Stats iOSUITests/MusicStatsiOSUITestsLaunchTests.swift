@@ -1,5 +1,5 @@
 //
-//  Music_Stats_iOSUITestsLaunchTests.swift
+//  MusicStatsiOSUITestsLaunchTests.swift
 //  Music Stats iOSUITests
 //
 //  Created by Brandon Lamer-Connolly on 10/23/23.
@@ -7,9 +7,9 @@
 
 import XCTest
 
-final class Music_Stats_iOSUITestsLaunchTests: XCTestCase {
+final class MusicStatsiOSUITestsLaunchTests: XCTestCase {
 
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
+    override static var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 

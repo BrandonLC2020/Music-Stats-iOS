@@ -1,5 +1,5 @@
 //
-//  Music_Stats_iOSTests.swift
+//  MusicStatsiOSTests.swift
 //  Music Stats iOSTests
 //
 //  Created by Brandon Lamer-Connolly on 10/23/23.
@@ -8,7 +8,7 @@
 import XCTest
 @testable import Music_Stats_iOS
 
-final class Music_Stats_iOSTests: XCTestCase {
+final class MusicStatsiOSTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -23,7 +23,8 @@ final class Music_Stats_iOSTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         // Any test you write for XCTest can be annotated as throws and async.
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+        // Mark your test async to allow awaiting for asynchronous code to complete.
+        // Check the results with assertions afterwards.
     }
 
     func testPerformanceExample() throws {

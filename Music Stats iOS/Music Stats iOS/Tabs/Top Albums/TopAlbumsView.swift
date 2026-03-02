@@ -18,7 +18,8 @@ struct TopAlbumsView: View {
                         Text("No Top Albums Found")
                             .font(.title2)
                             .bold()
-                        Text("We rank albums based on how many of your top 50 songs are from the same album. Listen to more songs from the same album to see them here!")
+                        Text("We rank albums based on how many of your top 50 songs are from the same album. " +
+                             "Listen to more songs from the same album to see them here!")
                             .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 40)
@@ -103,4 +104,3 @@ struct TopAlbumsView_Previews: PreviewProvider {
         TopAlbumsView(userTopItems: UserTopItems())
     }
 }
-

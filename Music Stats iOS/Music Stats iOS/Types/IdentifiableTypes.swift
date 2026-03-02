@@ -28,7 +28,6 @@ struct TopArtists: Identifiable, Hashable {
     var total: Int
     var items: [Artist]
 }
-    
 
 struct Song: Identifiable, Hashable {
     var id: String // Unique ID for SwiftUI (e.g., "short-1-spotifyId")
@@ -36,7 +35,7 @@ struct Song: Identifiable, Hashable {
     var rank: Int?
     var album: Album
     var artists: [Artist]
-    var duration_ms: Int //in milliseconds
+    var durationMs: Int // in milliseconds
     var name: String
     var popularity: Int
 }
@@ -58,7 +57,7 @@ struct Album: Identifiable, Hashable {
     var images: [ImageResponse]
     var name: String
     var artists: [Artist]? // Added this to store album artists
-    var release_date: String
+    var releaseDate: String
 }
 
 struct UserProfile: Identifiable, Hashable {
@@ -68,9 +67,9 @@ struct UserProfile: Identifiable, Hashable {
     var images: [ImageResponse]?
 }
 
-//struct Image: Identifiable {
+// struct Image: Identifiable {
 //    let id = UUID()
 //    var url: String
 //    var height: Int?
 //    var width: Int?
-//}
+// }
