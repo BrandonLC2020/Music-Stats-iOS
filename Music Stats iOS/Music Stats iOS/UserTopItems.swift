@@ -154,7 +154,7 @@ class UserTopItems: ObservableObject {
         }
     }
 
-    private func calculateTopAlbums() {
+    func calculateTopAlbums() {
         let keys = ["short", "medium", "long"]
         for key in keys {
             guard let songs = topSongsList[key] else {
