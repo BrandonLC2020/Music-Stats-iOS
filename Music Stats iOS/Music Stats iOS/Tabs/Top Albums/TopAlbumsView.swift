@@ -9,66 +9,49 @@ struct TopAlbumsView: View {
 
     var body: some View {
         NavigationStack {
-            if let albums = albumsForSelection() {
-                if albums.isEmpty {
-                    VStack(spacing: 20) {
-                        Image(systemName: "music.note.list")
-                            .font(.system(size: 60))
-                            .foregroundColor(.secondary)
-                        Text("No Top Albums Found")
-                            .font(.title2)
-                            .bold()
-                        Text("We rank albums based on how many of your top 50 songs are from the same album. " +
-                             "Listen to more songs from the same album to see them here!")
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 40)
-                    }
-                    .padding()
-                    .navigationTitle("Top Albums")
-                    .toolbar {
-                        timeframeToolbar
-                        ProfileToolbarItem()
-                    }
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 10) {
-                            ForEach(albums) { album in
-                                Button {
-                                    selectedAlbum = album
-                                } label: {
-                                    AlbumCard(album: album)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .id(album.id)
+            StateContainerView(
+                state: resolvedState,
+                loadingLabel: "Calculating Top Albums…",
+                emptySymbol: "music.note.list",
+                emptyTitle: "No Top Albums Found",
+                emptyDescription: "We rank albums based on how many of your top 50 songs are from the same album. " +
+                                  "Listen to more songs from the same album to see them here!",
+                onRetry: { userTopItems.retry() }
+            ) {
+                ScrollView {
+                    LazyVStack(spacing: 10) {
+                        ForEach(albumsForSelection() ?? []) { album in
+                            Button {
+                                selectedAlbum = album
+                            } label: {
+                                AlbumCard(album: album)
                             }
+                            .buttonStyle(PlainButtonStyle())
+                            .id(album.id)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.top, 10)
-                        .padding(.bottom, 20)
                     }
-                    .id(selection)
-                    .navigationDestination(item: $selectedAlbum) { album in
-                        AlbumDetailView(spotifyId: album.spotifyId ?? "", rank: album.rank)
-                    }
-                    .navigationTitle("Top Albums")
-                    .navigationBarTitleDisplayMode(.large)
-                    .toolbar {
-                        timeframeToolbar
-                        ProfileToolbarItem()
-                    }
+                    .padding(.horizontal, 8)
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
                 }
-            } else {
-                VStack {
-                    ProgressView("Calculating Top Albums...")
-                }
-                .navigationTitle("Top Albums")
-                .toolbar {
-                    timeframeToolbar
-                    ProfileToolbarItem()
-                }
+                .id(selection)
+            }
+            .navigationDestination(item: $selectedAlbum) { album in
+                AlbumDetailView(spotifyId: album.spotifyId ?? "", rank: album.rank)
+            }
+            .navigationTitle("Top Albums")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                timeframeToolbar
+                ProfileToolbarItem()
             }
         }
+    }
+
+    private var resolvedState: ViewState {
+        guard userTopItems.fetchState == .content else { return userTopItems.fetchState }
+        let albums = albumsForSelection() ?? []
+        return albums.isEmpty ? .empty : .content
     }
 
     private var timeframeToolbar: some ToolbarContent {
@@ -87,14 +70,10 @@ struct TopAlbumsView: View {
 
     private func albumsForSelection() -> [Album]? {
         switch selection {
-        case 0:
-            return userTopItems.topAlbumsList["short"]
-        case 1:
-            return userTopItems.topAlbumsList["medium"]
-        case 2:
-            return userTopItems.topAlbumsList["long"]
-        default:
-            return nil
+        case 0: return userTopItems.topAlbumsList["short"]
+        case 1: return userTopItems.topAlbumsList["medium"]
+        case 2: return userTopItems.topAlbumsList["long"]
+        default: return nil
         }
     }
 }
