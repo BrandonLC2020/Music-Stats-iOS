@@ -322,6 +322,14 @@ struct UserTopItemsTests {
         try await Task.sleep(for: .milliseconds(100))
         #expect(sut.fetchState == .loading)
     }
+
+    @Test("retry() immediately sets fetchState to .loading")
+    func retrySetsFetchStateToLoading() {
+        let sut = UserTopItems()
+        sut.fetchState = .error
+        sut.retry()
+        #expect(sut.fetchState == .loading)
+    }
 }
 
 // MARK: - Top Albums Calculation Tests

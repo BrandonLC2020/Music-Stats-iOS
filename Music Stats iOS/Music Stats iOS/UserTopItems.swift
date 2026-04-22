@@ -155,6 +155,35 @@ class UserTopItems: ObservableObject {
         }
     }
 
+    func fetchAll() {
+        let group = DispatchGroup()
+
+        group.enter()
+        getTopSongs { group.leave() }
+
+        group.enter()
+        getTopArtists { group.leave() }
+
+        group.notify(queue: .main) {
+            let songsLoaded = self.topSongsList.count == 3
+            let artistsLoaded = self.topArtistsList.count == 3
+            self.fetchState = (songsLoaded && artistsLoaded) ? .content : .error
+        }
+    }
+
+    func retry() {
+        // Called from main thread via SwiftUI action.
+        // Does NOT clear accessToken/tokenType — those are needed for re-fetching.
+        fetchState = .loading
+        topSongsResponse = [:]
+        topArtistsResponse = [:]
+        topSongsList = [:]
+        topArtistsList = [:]
+        topAlbumsList = [:]
+        getUserProfile {}
+        fetchAll()
+    }
+
     func calculateTopAlbums() {
         let keys = ["short", "medium", "long"]
         for key in keys {
