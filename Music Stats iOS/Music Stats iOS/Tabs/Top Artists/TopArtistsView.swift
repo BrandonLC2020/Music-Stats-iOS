@@ -9,10 +9,17 @@ struct TopArtistsView: View {
 
     var body: some View {
         NavigationStack {
-            if let artists = artistsForSelection() {
+            StateContainerView(
+                state: userTopItems.fetchState,
+                loadingLabel: "Loading Artists…",
+                emptySymbol: "music.mic",
+                emptyTitle: "No Top Artists Found",
+                emptyDescription: "",
+                onRetry: { userTopItems.retry() }
+            ) {
                 ScrollView {
                     LazyVStack(spacing: 10) {
-                        ForEach(artists) { artist in
+                        ForEach(artistsForSelection() ?? []) { artist in
                             Button {
                                 selectedArtist = artist
                             } label: {
@@ -27,44 +34,35 @@ struct TopArtistsView: View {
                     .padding(.bottom, 20)
                 }
                 .id(selection)
-                .navigationDestination(item: $selectedArtist) { artist in
-                    ArtistDetailView(spotifyId: artist.spotifyId, rank: artist.rank)
-                }
-                .navigationTitle("Top Artists")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Menu {
-                            Picker("Time Period", selection: $selection) {
-                                Text("Past Month").tag(0)
-                                Text("Past 6 Months").tag(1)
-                                Text("Past Years").tag(2)
-                            }
-                        } label: {
-                            Image(systemName: "calendar")
+            }
+            .navigationDestination(item: $selectedArtist) { artist in
+                ArtistDetailView(spotifyId: artist.spotifyId, rank: artist.rank)
+            }
+            .navigationTitle("Top Artists")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Picker("Time Period", selection: $selection) {
+                            Text("Past Month").tag(0)
+                            Text("Past 6 Months").tag(1)
+                            Text("Past Years").tag(2)
                         }
+                    } label: {
+                        Image(systemName: "calendar")
                     }
-                    ProfileToolbarItem()
                 }
-            } else {
-                VStack {
-                    ProgressView("Loading Artists...")
-                }
-                .navigationTitle("Top Artists")
+                ProfileToolbarItem()
             }
         }
     }
 
     private func artistsForSelection() -> [Artist]? {
         switch selection {
-        case 0:
-            return userTopItems.topArtistsList["short"]
-        case 1:
-            return userTopItems.topArtistsList["medium"]
-        case 2:
-            return userTopItems.topArtistsList["long"]
-        default:
-            return nil
+        case 0: return userTopItems.topArtistsList["short"]
+        case 1: return userTopItems.topArtistsList["medium"]
+        case 2: return userTopItems.topArtistsList["long"]
+        default: return nil
         }
     }
 }
