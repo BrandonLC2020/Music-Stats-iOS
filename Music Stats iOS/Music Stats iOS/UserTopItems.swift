@@ -332,6 +332,7 @@ class UserTopItems: ObservableObject {
             self.userProfile = nil
             self.accessToken = ""
             self.tokenType = ""
+            self.fetchState = .loading
         }
     }
 }

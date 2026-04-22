@@ -312,6 +312,16 @@ struct UserTopItemsTests {
         let sut = UserTopItems()
         #expect(sut.fetchState == .loading)
     }
+
+    @Test("reset() sets fetchState back to .loading")
+    func resetClearsFetchState() async throws {
+        let sut = UserTopItems()
+        sut.fetchState = .error
+        sut.reset()
+        // reset() dispatches to main queue; wait for it to execute
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(sut.fetchState == .loading)
+    }
 }
 
 // MARK: - Top Albums Calculation Tests
