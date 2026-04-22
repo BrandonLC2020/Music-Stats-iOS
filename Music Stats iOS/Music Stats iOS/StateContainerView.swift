@@ -48,3 +48,56 @@ struct StateContainerView<Content: View>: View {
         }
     }
 }
+
+#Preview("Loading") {
+    StateContainerView(
+        state: .loading,
+        loadingLabel: "Loading Songs…",
+        emptySymbol: "music.note",
+        emptyTitle: "No Songs Found",
+        emptyDescription: "",
+        onRetry: {}
+    ) {
+        Text("Content goes here")
+    }
+}
+
+#Preview("Content") {
+    StateContainerView(
+        state: .content,
+        loadingLabel: "Loading Songs…",
+        emptySymbol: "music.note",
+        emptyTitle: "No Songs Found",
+        emptyDescription: "",
+        onRetry: {}
+    ) {
+        Text("Content goes here")
+            .font(.title)
+    }
+}
+
+#Preview("Error") {
+    StateContainerView(
+        state: .error,
+        loadingLabel: "Loading Songs…",
+        emptySymbol: "music.note",
+        emptyTitle: "No Songs Found",
+        emptyDescription: "",
+        onRetry: {}
+    ) {
+        Text("Content goes here")
+    }
+}
+
+#Preview("Empty") {
+    StateContainerView(
+        state: .empty,
+        loadingLabel: "Loading Songs…",
+        emptySymbol: "music.note.list",
+        emptyTitle: "No Top Albums Found",
+        emptyDescription: "We rank albums based on how many of your top 50 songs are from the same album. Listen to more songs from the same album to see them here!",
+        onRetry: {}
+    ) {
+        Text("Content goes here")
+    }
+}
