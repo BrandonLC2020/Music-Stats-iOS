@@ -306,6 +306,12 @@ struct UserTopItemsTests {
         #expect(sut.accessToken == "")
         #expect(sut.tokenType == "")
     }
+
+    @Test("fetchState starts as .loading")
+    func fetchStateInitiallyLoading() {
+        let sut = UserTopItems()
+        #expect(sut.fetchState == .loading)
+    }
 }
 
 // MARK: - Top Albums Calculation Tests

@@ -14,6 +14,7 @@ class UserTopItems: ObservableObject {
     @Published var topArtistsList: [String: [Artist]]
     @Published var topAlbumsList: [String: [Album]]
     @Published var userProfile: UserProfile?
+    @Published var fetchState: ViewState = .loading
     var accessToken: String
     var tokenType: String
 
