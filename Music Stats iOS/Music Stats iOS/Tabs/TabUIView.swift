@@ -41,8 +41,7 @@ struct TabUIView: View {
                 userTopItems.accessToken = accessToken
                 userTopItems.tokenType = tokenType
                 userTopItems.getUserProfile {}
-                userTopItems.getTopSongs {}
-                userTopItems.getTopArtists {}
+                userTopItems.fetchAll()
             }
         }
         .navigationBarBackButtonHidden(true)
