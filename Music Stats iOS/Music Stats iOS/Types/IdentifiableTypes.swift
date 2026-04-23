@@ -58,6 +58,8 @@ struct Album: Identifiable, Hashable {
     var name: String
     var artists: [Artist]? // Added this to store album artists
     var releaseDate: String
+    var totalTracks: Int? = nil
+    var songCount: Int? = nil
 }
 
 struct UserProfile: Identifiable, Hashable {

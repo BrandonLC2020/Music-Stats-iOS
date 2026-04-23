@@ -72,7 +72,8 @@ class UserTopItems: ObservableObject {
                     artists: songResponse.artists.map {
                         Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
                     },
-                    releaseDate: songResponse.album.releaseDate
+                    releaseDate: songResponse.album.releaseDate,
+                    totalTracks: songResponse.album.totalTracks
                 )
                 let rank = index + 1
                 let artists = songResponse.artists.map {
