@@ -6,6 +6,7 @@ struct AlbumDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
     let spotifyId: String
     let rank: Int?
+    let songCount: Int?
 
     @State private var album: AlbumResponse?
     @State private var isLoading = true
@@ -54,6 +55,9 @@ struct AlbumDetailView: View {
                         }
                         if let popularity = album.popularity {
                             DetailRow(label: "Popularity", value: "\(popularity)/100")
+                        }
+                        if let songCount = songCount {
+                            DetailRow(label: "Songs in Your Top 50", value: "\(songCount)")
                         }
                         if let rank = rank {
                             DetailRow(label: "Rank", value: "#\(rank)")

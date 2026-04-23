@@ -37,7 +37,7 @@ struct TopAlbumsView: View {
                 .id(selection)
             }
             .navigationDestination(item: $selectedAlbum) { album in
-                AlbumDetailView(spotifyId: album.spotifyId ?? "", rank: album.rank)
+                AlbumDetailView(spotifyId: album.spotifyId ?? "", rank: album.rank, songCount: album.songCount)
             }
             .navigationTitle("Top Albums")
             .navigationBarTitleDisplayMode(.large)
