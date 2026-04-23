@@ -340,16 +340,20 @@ struct TopAlbumsCalculationTests {
         albumId: String,
         albumName: String,
         rank: Int,
+        artistId: String = "artist-default",
+        totalTracks: Int? = nil,
         timeRange: String = "short"
     ) -> Song {
         let image = ImageResponse(url: "https://img.com", height: 300, width: 300)
+        let artist = Artist(id: "test-\(artistId)", spotifyId: artistId, name: "Artist \(artistId)")
         let album = Album(
             id: albumId, spotifyId: albumId, rank: nil,
-            images: [image], name: albumName, artists: nil, releaseDate: "2023-01-01"
+            images: [image], name: albumName, artists: [artist],
+            releaseDate: "2023-01-01", totalTracks: totalTracks
         )
         return Song(
             id: "\(timeRange)-\(rank)-\(spotifyId)", spotifyId: spotifyId, rank: rank,
-            album: album, artists: [], durationMs: 200000, name: name, popularity: 80
+            album: album, artists: [artist], durationMs: 200000, name: name, popularity: 80
         )
     }
 
@@ -479,5 +483,132 @@ struct AuthManagerTests {
         #expect(sut.accessToken == nil)
         #expect(sut.tokenType == nil)
         #expect(sut.isAuthenticated == false)
+    }
+}
+
+// MARK: - Album Ranking Refinement Tests
+
+@MainActor
+@Suite("Album Ranking Refinement")
+struct AlbumRankingRefinementTests {
+
+    private func makeSong(
+        name: String,
+        spotifyId: String,
+        albumId: String,
+        albumName: String,
+        rank: Int,
+        artistId: String = "artist-default",
+        totalTracks: Int? = nil,
+        timeRange: String = "short"
+    ) -> Song {
+        let image = ImageResponse(url: "https://img.com", height: 300, width: 300)
+        let artist = Artist(id: "test-\(artistId)", spotifyId: artistId, name: "Artist \(artistId)")
+        let album = Album(
+            id: albumId, spotifyId: albumId, rank: nil,
+            images: [image], name: albumName, artists: [artist],
+            releaseDate: "2023-01-01", totalTracks: totalTracks
+        )
+        return Song(
+            id: "\(timeRange)-\(rank)-\(spotifyId)", spotifyId: spotifyId, rank: rank,
+            album: album, artists: [artist], durationMs: 200000, name: name, popularity: 80
+        )
+    }
+
+    @Test("Weighted score: album with high-ranked songs beats album with more low-ranked songs")
+    func weightedScoreBeatsRawCount() {
+        let sut = UserTopItems()
+        // Album A: 2 songs ranked #1 and #2 → score = 50 + 49 = 99
+        // Album B: 3 songs ranked #48, #49, #50 → score = 3 + 2 + 1 = 6
+        // Album A should win despite fewer songs
+        sut.topSongsList["short"] = [
+            makeSong(name: "S1", spotifyId: "s1", albumId: "albA", albumName: "Album A",
+                     rank: 1, artistId: "artist1"),
+            makeSong(name: "S2", spotifyId: "s2", albumId: "albA", albumName: "Album A",
+                     rank: 2, artistId: "artist1"),
+            makeSong(name: "S3", spotifyId: "s3", albumId: "albB", albumName: "Album B",
+                     rank: 48, artistId: "artist2"),
+            makeSong(name: "S4", spotifyId: "s4", albumId: "albB", albumName: "Album B",
+                     rank: 49, artistId: "artist2"),
+            makeSong(name: "S5", spotifyId: "s5", albumId: "albB", albumName: "Album B",
+                     rank: 50, artistId: "artist2"),
+        ]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]!
+        #expect(albums.count == 2)
+        #expect(albums[0].name == "Album A")
+        #expect(albums[1].name == "Album B")
+    }
+
+    @Test("Edition merging: deluxe and standard editions combine into one album")
+    func deluxeEditionsMerged() {
+        let sut = UserTopItems()
+        // Songs from both "Midnights" (albA) and "Midnights (3am Edition)" (albB) by same artist
+        sut.topSongsList["short"] = [
+            makeSong(name: "S1", spotifyId: "s1", albumId: "albA", albumName: "Midnights",
+                     rank: 5, artistId: "artist1"),
+            makeSong(name: "S2", spotifyId: "s2", albumId: "albB",
+                     albumName: "Midnights (3am Edition)", rank: 10, artistId: "artist1"),
+            makeSong(name: "S3", spotifyId: "s3", albumId: "albA", albumName: "Midnights",
+                     rank: 15, artistId: "artist1"),
+            makeSong(name: "S4", spotifyId: "s4", albumId: "albB",
+                     albumName: "Midnights (3am Edition)", rank: 20, artistId: "artist1"),
+        ]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]!
+        #expect(albums.count == 1)
+        #expect(albums[0].name == "Midnights")
+    }
+
+    @Test("songCount reflects total songs pooled across merged editions")
+    func songCountAfterMerge() {
+        let sut = UserTopItems()
+        sut.topSongsList["short"] = [
+            makeSong(name: "S1", spotifyId: "s1", albumId: "albA", albumName: "Midnights",
+                     rank: 5, artistId: "artist1"),
+            makeSong(name: "S2", spotifyId: "s2", albumId: "albB",
+                     albumName: "Midnights (3am Edition)", rank: 10, artistId: "artist1"),
+            makeSong(name: "S3", spotifyId: "s3", albumId: "albA", albumName: "Midnights",
+                     rank: 15, artistId: "artist1"),
+            makeSong(name: "S4", spotifyId: "s4", albumId: "albB",
+                     albumName: "Midnights (3am Edition)", rank: 20, artistId: "artist1"),
+        ]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]!
+        #expect(albums[0].songCount == 4)
+    }
+
+    @Test("totalTracks is propagated from the representative song's album data")
+    func totalTracksIsPopulated() {
+        let sut = UserTopItems()
+        sut.topSongsList["short"] = [
+            makeSong(name: "S1", spotifyId: "s1", albumId: "albA", albumName: "My Album",
+                     rank: 1, artistId: "artist1", totalTracks: 13),
+            makeSong(name: "S2", spotifyId: "s2", albumId: "albA", albumName: "My Album",
+                     rank: 2, artistId: "artist1", totalTracks: 13),
+        ]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]!
+        #expect(albums[0].totalTracks == 13)
+    }
+
+    @Test("Representative album uses shortest name when editions are merged")
+    func representativeAlbumHasShortestName() {
+        let sut = UserTopItems()
+        // Both editions should merge; "Folklore" is shorter than "Folklore (Deluxe Version)"
+        sut.topSongsList["short"] = [
+            makeSong(name: "S1", spotifyId: "s1", albumId: "albB",
+                     albumName: "Folklore (Deluxe Version)", rank: 1, artistId: "artist1"),
+            makeSong(name: "S2", spotifyId: "s2", albumId: "albB",
+                     albumName: "Folklore (Deluxe Version)", rank: 2, artistId: "artist1"),
+            makeSong(name: "S3", spotifyId: "s3", albumId: "albA", albumName: "Folklore",
+                     rank: 3, artistId: "artist1"),
+            makeSong(name: "S4", spotifyId: "s4", albumId: "albA", albumName: "Folklore",
+                     rank: 4, artistId: "artist1"),
+        ]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]!
+        #expect(albums.count == 1)
+        #expect(albums[0].name == "Folklore")
     }
 }
