@@ -257,6 +257,7 @@ struct JSONDecodingTests {
 
 // MARK: - UserTopItems Tests
 
+@MainActor
 @Suite("UserTopItems")
 struct UserTopItemsTests {
 
@@ -294,9 +295,6 @@ struct UserTopItemsTests {
 
         sut.reset()
 
-        // reset() dispatches to main queue; wait for it to execute
-        try await Task.sleep(for: .milliseconds(100))
-
         #expect(sut.topSongsResponse.isEmpty)
         #expect(sut.topArtistsResponse.isEmpty)
         #expect(sut.topSongsList.isEmpty)
@@ -314,12 +312,10 @@ struct UserTopItemsTests {
     }
 
     @Test("reset() sets fetchState back to .loading")
-    func resetClearsFetchState() async throws {
+    func resetClearsFetchState() {
         let sut = UserTopItems()
         sut.fetchState = .error
         sut.reset()
-        // reset() dispatches to main queue; wait for it to execute
-        try await Task.sleep(for: .milliseconds(100))
         #expect(sut.fetchState == .loading)
     }
 
@@ -334,10 +330,10 @@ struct UserTopItemsTests {
 
 // MARK: - Top Albums Calculation Tests
 
+@MainActor
 @Suite("Top Albums Calculation")
 struct TopAlbumsCalculationTests {
 
-    /// Convenience builder so test bodies stay concise.
     private func makeSong(
         name: String,
         spotifyId: String,
@@ -365,9 +361,7 @@ struct TopAlbumsCalculationTests {
             makeSong(name: "Song B", spotifyId: "s2", albumId: "alb2", albumName: "Album 2", rank: 2),
             makeSong(name: "Song C", spotifyId: "s3", albumId: "alb3", albumName: "Album 3", rank: 3)
         ]
-
         sut.calculateTopAlbums()
-
         #expect(sut.topAlbumsList["short"]?.isEmpty == true)
     }
 
@@ -379,9 +373,7 @@ struct TopAlbumsCalculationTests {
             makeSong(name: "Song B", spotifyId: "s2", albumId: "alb1", albumName: "Hit Album", rank: 2),
             makeSong(name: "Song C", spotifyId: "s3", albumId: "alb2", albumName: "Other Album", rank: 3)
         ]
-
         sut.calculateTopAlbums()
-
         let albums = sut.topAlbumsList["short"]
         #expect(albums?.count == 1)
         #expect(albums?[0].name == "Hit Album")
@@ -390,7 +382,6 @@ struct TopAlbumsCalculationTests {
     @Test("Albums sorted by song count descending, then by best rank ascending")
     func albumsSortedBySongCountThenBestRank() {
         let sut = UserTopItems()
-        // alb1 has 2 songs; alb2 has 3 songs — alb2 should rank first
         sut.topSongsList["short"] = [
             makeSong(name: "Song 1", spotifyId: "s1", albumId: "alb1", albumName: "Album One", rank: 1),
             makeSong(name: "Song 2", spotifyId: "s2", albumId: "alb1", albumName: "Album One", rank: 2),
@@ -398,9 +389,7 @@ struct TopAlbumsCalculationTests {
             makeSong(name: "Song 4", spotifyId: "s4", albumId: "alb2", albumName: "Album Two", rank: 4),
             makeSong(name: "Song 5", spotifyId: "s5", albumId: "alb2", albumName: "Album Two", rank: 5)
         ]
-
         sut.calculateTopAlbums()
-
         let albums = sut.topAlbumsList["short"]
         #expect(albums?.count == 2)
         #expect(albums?[0].name == "Album Two")
@@ -410,16 +399,13 @@ struct TopAlbumsCalculationTests {
     @Test("Albums with equal song count sorted by best song rank (lower is better)")
     func albumsWithTiedCountSortedByBestRank() {
         let sut = UserTopItems()
-        // alb1 best rank = 1; alb2 best rank = 3 — alb1 should rank first
         sut.topSongsList["short"] = [
             makeSong(name: "Song 1", spotifyId: "s1", albumId: "alb1", albumName: "Better Album", rank: 1),
             makeSong(name: "Song 2", spotifyId: "s2", albumId: "alb1", albumName: "Better Album", rank: 2),
             makeSong(name: "Song 3", spotifyId: "s3", albumId: "alb2", albumName: "Worse Album", rank: 3),
             makeSong(name: "Song 4", spotifyId: "s4", albumId: "alb2", albumName: "Worse Album", rank: 4)
         ]
-
         sut.calculateTopAlbums()
-
         let albums = sut.topAlbumsList["short"]
         #expect(albums?.count == 2)
         #expect(albums?[0].name == "Better Album")
@@ -435,9 +421,7 @@ struct TopAlbumsCalculationTests {
             makeSong(name: "Song 3", spotifyId: "s3", albumId: "alb2", albumName: "Album Two", rank: 3),
             makeSong(name: "Song 4", spotifyId: "s4", albumId: "alb2", albumName: "Album Two", rank: 4)
         ]
-
         sut.calculateTopAlbums()
-
         let albums = sut.topAlbumsList["short"]
         #expect(albums?[0].rank == 1)
         #expect(albums?[1].rank == 2)
@@ -447,7 +431,6 @@ struct TopAlbumsCalculationTests {
     func emptyInputProducesEmptyOutputForAllRanges() {
         let sut = UserTopItems()
         sut.calculateTopAlbums()
-
         #expect(sut.topAlbumsList["short"]?.isEmpty == true)
         #expect(sut.topAlbumsList["medium"]?.isEmpty == true)
         #expect(sut.topAlbumsList["long"]?.isEmpty == true)
@@ -460,9 +443,7 @@ struct TopAlbumsCalculationTests {
             makeSong(name: "Song 1", spotifyId: "s1", albumId: "alb1", albumName: "Album One", rank: 1),
             makeSong(name: "Song 2", spotifyId: "s2", albumId: "alb1", albumName: "Album One", rank: 2)
         ]
-
         sut.calculateTopAlbums()
-
         let album = sut.topAlbumsList["short"]?.first
         #expect(album?.id == "short-1-alb1")
     }
@@ -470,14 +451,11 @@ struct TopAlbumsCalculationTests {
     @Test("calculateTopAlbums is independent per time range")
     func independentPerTimeRange() {
         let sut = UserTopItems()
-        // Only populate "short"
         sut.topSongsList["short"] = [
             makeSong(name: "Song 1", spotifyId: "s1", albumId: "alb1", albumName: "Hit Album", rank: 1),
             makeSong(name: "Song 2", spotifyId: "s2", albumId: "alb1", albumName: "Hit Album", rank: 2)
         ]
-
         sut.calculateTopAlbums()
-
         #expect(sut.topAlbumsList["short"]?.count == 1)
         #expect(sut.topAlbumsList["medium"]?.isEmpty == true)
         #expect(sut.topAlbumsList["long"]?.isEmpty == true)
@@ -486,19 +464,17 @@ struct TopAlbumsCalculationTests {
 
 // MARK: - AuthManager Tests
 
+@MainActor
 @Suite("AuthManager")
 struct AuthManagerTests {
 
     @Test("logout() clears tokens and sets isAuthenticated to false")
-    func logoutClearsState() async throws {
+    func logoutClearsState() {
         let sut = AuthManager()
         sut.accessToken = "some-access-token"
         sut.tokenType = "Bearer"
 
         sut.logout()
-
-        // logout() dispatches isAuthenticated update to main queue; wait for it
-        try await Task.sleep(for: .milliseconds(100))
 
         #expect(sut.accessToken == nil)
         #expect(sut.tokenType == nil)

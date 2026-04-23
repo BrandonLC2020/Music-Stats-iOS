@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class UserTopItems: ObservableObject {
     @Published var topSongsResponse: [String: [SongResponse]]
     @Published var topArtistsResponse: [String: [ArtistResponse]]
@@ -29,159 +30,115 @@ class UserTopItems: ObservableObject {
         self.tokenType = ""
     }
 
-    func getUserProfile(completion: @escaping () -> Void) {
+    func getUserProfile() async {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
         components.path = "/v1/me"
 
-        guard let url = components.url else {
-            completion()
-            return
-        }
+        guard let url = components.url else { return }
 
-        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-        URLSession.shared.dataTask(with: request) { (data, _, error) in
-            guard let data = data, error == nil else {
-                completion()
-                return
-            }
+        guard let (data, _) = try? await URLSession.shared.data(for: request) else { return }
 
-            do {
-                let responseObject = try JSONDecoder().decode(UserProfileResponse.self, from: data)
-                DispatchQueue.main.async {
-                    self.userProfile = UserProfile(
-                        id: responseObject.id,
-                        displayName: responseObject.displayName,
-                        email: responseObject.email,
-                        images: responseObject.images
-                    )
-                    completion()
-                }
-            } catch {
-                print("Error fetching user profile: \(error)")
-                completion()
-            }
-        }.resume()
-    }
-
-    func getTopSongs(completion: @escaping () -> Void) {
-        let ranges = ["short_term", "medium_term", "long_term"]
-        let group = DispatchGroup()
-
-        for range in ranges {
-            let key = range.components(separatedBy: "_")[0]
-            group.enter()
-            getSongsForTimeRange(range: range, offset: 0) { songsResponse in
-                if let songsResponse = songsResponse {
-                    DispatchQueue.main.async {
-                        self.topSongsResponse[key] = songsResponse.items
-
-                        self.topSongsList[key] = songsResponse.items.enumerated().map { (index, songResponse) in
-                            let album = Album(
-                                id: songResponse.album.id,
-                                spotifyId: songResponse.album.id,
-                                rank: nil,
-                                images: songResponse.album.images,
-                                name: songResponse.album.name,
-                                artists: songResponse.artists.map {
-                                    Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
-                                },
-                                releaseDate: songResponse.album.releaseDate
-                            )
-                            let rank = index + 1
-                            let artists = songResponse.artists.map {
-                                Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
-                            }
-                            return Song(
-                                id: "\(key)-\(rank)-\(songResponse.id)",
-                                spotifyId: songResponse.id,
-                                rank: rank,
-                                album: album,
-                                artists: artists,
-                                durationMs: songResponse.durationMs,
-                                name: songResponse.name,
-                                popularity: songResponse.popularity
-                            )
-                        }
-                    }
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) {
-            self.calculateTopAlbums()
-            completion()
+        if let responseObject = try? JSONDecoder().decode(UserProfileResponse.self, from: data) {
+            userProfile = UserProfile(
+                id: responseObject.id,
+                displayName: responseObject.displayName,
+                email: responseObject.email,
+                images: responseObject.images
+            )
         }
     }
 
-    func getTopArtists(completion: @escaping () -> Void) {
-        let ranges = ["short_term", "medium_term", "long_term"]
-        let group = DispatchGroup()
+    func getTopSongs() async throws {
+        async let short = getSongsForTimeRange(range: "short_term", offset: 0)
+        async let medium = getSongsForTimeRange(range: "medium_term", offset: 0)
+        async let long = getSongsForTimeRange(range: "long_term", offset: 0)
+        let (shortResponse, mediumResponse, longResponse) = try await (short, medium, long)
 
-        for range in ranges {
-            let key = range.components(separatedBy: "_")[0]
-            group.enter()
-            getArtistsForTimeRange(range: range, offset: 0) { artistsResponse in
-                if let artistsResponse = artistsResponse {
-                    DispatchQueue.main.async {
-                        self.topArtistsResponse[key] = artistsResponse.items
-
-                        self.topArtistsList[key] = artistsResponse.items.enumerated().map { (index, artistResponse) in
-                            let rank = index + 1
-                            return Artist(
-                                id: "\(key)-\(rank)-\(artistResponse.id)",
-                                spotifyId: artistResponse.id,
-                                rank: rank,
-                                images: artistResponse.images,
-                                name: artistResponse.name,
-                                popularity: artistResponse.popularity,
-                                genres: artistResponse.genres
-                            )
-                        }
-                    }
+        for (key, response) in zip(["short", "medium", "long"], [shortResponse, mediumResponse, longResponse]) {
+            topSongsResponse[key] = response.items
+            topSongsList[key] = response.items.enumerated().map { (index, songResponse) in
+                let album = Album(
+                    id: songResponse.album.id,
+                    spotifyId: songResponse.album.id,
+                    rank: nil,
+                    images: songResponse.album.images,
+                    name: songResponse.album.name,
+                    artists: songResponse.artists.map {
+                        Artist(id: "album-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
+                    },
+                    releaseDate: songResponse.album.releaseDate
+                )
+                let rank = index + 1
+                let artists = songResponse.artists.map {
+                    Artist(id: "song-artist-\($0.id)", spotifyId: $0.id, name: $0.name)
                 }
-                group.leave()
+                return Song(
+                    id: "\(key)-\(rank)-\(songResponse.id)",
+                    spotifyId: songResponse.id,
+                    rank: rank,
+                    album: album,
+                    artists: artists,
+                    durationMs: songResponse.durationMs,
+                    name: songResponse.name,
+                    popularity: songResponse.popularity
+                )
             }
         }
+        calculateTopAlbums()
+    }
 
-        group.notify(queue: .main) {
-            completion()
+    func getTopArtists() async throws {
+        async let short = getArtistsForTimeRange(range: "short_term", offset: 0)
+        async let medium = getArtistsForTimeRange(range: "medium_term", offset: 0)
+        async let long = getArtistsForTimeRange(range: "long_term", offset: 0)
+        let (shortResponse, mediumResponse, longResponse) = try await (short, medium, long)
+
+        for (key, response) in zip(["short", "medium", "long"], [shortResponse, mediumResponse, longResponse]) {
+            topArtistsResponse[key] = response.items
+            topArtistsList[key] = response.items.enumerated().map { (index, artistResponse) in
+                let rank = index + 1
+                return Artist(
+                    id: "\(key)-\(rank)-\(artistResponse.id)",
+                    spotifyId: artistResponse.id,
+                    rank: rank,
+                    images: artistResponse.images,
+                    name: artistResponse.name,
+                    popularity: artistResponse.popularity,
+                    genres: artistResponse.genres
+                )
+            }
         }
     }
 
-    func fetchAll() {
-        let group = DispatchGroup()
-
-        group.enter()
-        getTopSongs { group.leave() }
-
-        group.enter()
-        getTopArtists { group.leave() }
-
-        group.notify(queue: .main) {
-            let songsLoaded = self.topSongsList.count == 3
-            let artistsLoaded = self.topArtistsList.count == 3
-            self.fetchState = (songsLoaded && artistsLoaded) ? .content : .error
+    func fetchAll() async {
+        do {
+            async let songs: Void = getTopSongs()
+            async let artists: Void = getTopArtists()
+            try await songs
+            try await artists
+            fetchState = .content
+        } catch {
+            fetchState = .error
         }
     }
 
     func retry() {
-        // Called from main thread via SwiftUI action.
-        // Does NOT clear accessToken/tokenType — those are needed for re-fetching.
         fetchState = .loading
         topSongsResponse = [:]
         topArtistsResponse = [:]
         topSongsList = [:]
         topArtistsList = [:]
         topAlbumsList = [:]
-        getUserProfile {}
-        fetchAll()
+        Task {
+            await getUserProfile()
+            await fetchAll()
+        }
     }
 
     func calculateTopAlbums() {
@@ -192,18 +149,13 @@ class UserTopItems: ObservableObject {
                 continue
             }
 
-            // Group songs by album ID
             var albumToSongs: [String: [Song]] = [:]
             for song in songs {
                 albumToSongs[song.album.id, default: []].append(song)
             }
 
-            // Filter: "if there's more than one top song with a shared album, include it on top albums"
             let filteredAlbums = albumToSongs.filter { $1.count > 1 }
 
-            // Sort by:
-            // 1. Number of songs in top tracks (descending)
-            // 2. Rank of the highest song (ascending - lower is better)
             let sortedAlbumIds = filteredAlbums.keys.sorted { id1, id2 in
                 let songs1 = filteredAlbums[id1]!
                 let songs2 = filteredAlbums[id2]!
@@ -220,7 +172,7 @@ class UserTopItems: ObservableObject {
 
             self.topAlbumsList[key] = sortedAlbumIds.enumerated().map { index, albumId in
                 let songs = filteredAlbums[albumId]!
-                let firstSong = songs[0] // Representative song to get album details
+                let firstSong = songs[0]
                 return Album(
                     id: "\(key)-\(index + 1)-\(albumId)",
                     spotifyId: albumId,
@@ -234,7 +186,7 @@ class UserTopItems: ObservableObject {
         }
     }
 
-    func getSongsForTimeRange(range: String, offset: Int, userCompletionHandler: @escaping (TopSongsResponse?) -> Void) {
+    func getSongsForTimeRange(range: String, offset: Int) async throws -> TopSongsResponse {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
@@ -245,57 +197,24 @@ class UserTopItems: ObservableObject {
             URLQueryItem(name: "offset", value: String(offset))
         ]
 
-        guard let url = components.url else {
-            userCompletionHandler(nil)
-            return
-        }
+        guard let url = components.url else { throw URLError(.badURL) }
 
-        let authorizationAccessTokenStr = accessToken
-        let authorizationTokenTypeStr = tokenType
-        let requestHeaders: [String: String] = [
-            "Authorization": "\(authorizationTokenTypeStr) \(authorizationAccessTokenStr)"
-        ]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
-        URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-            guard
-                let data = data,
-                let response = response as? HTTPURLResponse,
-                error == nil
-            else {
-                print("error", error ?? URLError(.badServerResponse))
-                userCompletionHandler(nil)
-                return
-            }
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-            guard (200 ... 299) ~= response.statusCode else {
-                print("statusCode should be 2xx, but is \(response.statusCode)")
-                print("response = \(response)")
-                userCompletionHandler(nil)
-                return
-            }
-            do {
-                let responseObject: TopSongsResponse = try JSONDecoder().decode(TopSongsResponse.self, from: data)
-                userCompletionHandler(responseObject)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
-            } catch {
-                print(error) // parsing error
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("responseString = \(responseString)")
-                } else {
-                    print("unable to parse response as string")
-                }
-                userCompletionHandler(nil)
-            }
-        }).resume()
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.badStatusCode(code)
+        }
+
+        return try JSONDecoder().decode(TopSongsResponse.self, from: data)
     }
 
-    func getArtistsForTimeRange(
-        range: String,
-        offset: Int,
-        userCompletionHandler: @escaping (TopArtistsResponse?) -> Void
-    ) {
+    func getArtistsForTimeRange(range: String, offset: Int) async throws -> TopArtistsResponse {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
@@ -306,158 +225,104 @@ class UserTopItems: ObservableObject {
             URLQueryItem(name: "offset", value: String(offset))
         ]
 
-        guard let url = components.url else {
-            userCompletionHandler(nil)
-            return
-        }
+        guard let url = components.url else { throw URLError(.badURL) }
 
-        let authorizationAccessTokenStr = accessToken
-        let authorizationTokenTypeStr = tokenType
-        let requestHeaders: [String: String] = [
-            "Authorization": authorizationTokenTypeStr + " " + authorizationAccessTokenStr
-        ]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
-        URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-            guard
-                let data = data,
-                let response = response as? HTTPURLResponse,
-                error == nil
-            else {
-                print("error", error ?? URLError(.badServerResponse))
-                userCompletionHandler(nil)
-                return
-            }
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-            guard (200 ... 299) ~= response.statusCode else {
-                print("statusCode should be 2xx, but is \(response.statusCode)")
-                print("response = \(response)")
-                userCompletionHandler(nil)
-                return
-            }
-            do {
-                let responseObject: TopArtistsResponse = try JSONDecoder().decode(TopArtistsResponse.self, from: data)
-                userCompletionHandler(responseObject)
-            } catch {
-                print(error) // parsing error
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("responseString = \(responseString)")
-                } else {
-                    print("unable to parse response as string")
-                }
-                userCompletionHandler(nil)
-            }
-        }).resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.badStatusCode(code)
+        }
+
+        return try JSONDecoder().decode(TopArtistsResponse.self, from: data)
     }
 
     func reset() {
-        DispatchQueue.main.async {
-            self.topSongsResponse = [:]
-            self.topArtistsResponse = [:]
-            self.topSongsList = [:]
-            self.topArtistsList = [:]
-            self.topAlbumsList = [:]
-            self.userProfile = nil
-            self.accessToken = ""
-            self.tokenType = ""
-            self.fetchState = .loading
-        }
+        topSongsResponse = [:]
+        topArtistsResponse = [:]
+        topSongsList = [:]
+        topArtistsList = [:]
+        topAlbumsList = [:]
+        userProfile = nil
+        accessToken = ""
+        tokenType = ""
+        fetchState = .loading
     }
 }
 
 // MARK: - Individual Item Fetching
 extension UserTopItems {
-    func getTrack(id: String, userCompletionHandler: @escaping (SongResponse?) -> Void) {
+    func getTrack(id: String) async throws -> SongResponse {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
         components.path = "/v1/tracks/\(id)"
 
-        guard let url = components.url else {
-            userCompletionHandler(nil)
-            return
-        }
+        guard let url = components.url else { throw URLError(.badURL) }
 
-        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            guard let data = data, error == nil else {
-                userCompletionHandler(nil)
-                return
-            }
-            do {
-                let track = try JSONDecoder().decode(SongResponse.self, from: data)
-                userCompletionHandler(track)
-            } catch {
-                print("Error decoding track: \(error)")
-                userCompletionHandler(nil)
-            }
-        }.resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.badStatusCode(code)
+        }
+
+        return try JSONDecoder().decode(SongResponse.self, from: data)
     }
 
-    func getArtist(id: String, userCompletionHandler: @escaping (ArtistResponse?) -> Void) {
+    func getArtist(id: String) async throws -> ArtistResponse {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
         components.path = "/v1/artists/\(id)"
 
-        guard let url = components.url else {
-            userCompletionHandler(nil)
-            return
-        }
+        guard let url = components.url else { throw URLError(.badURL) }
 
-        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            guard let data = data, error == nil else {
-                userCompletionHandler(nil)
-                return
-            }
-            do {
-                let artist = try JSONDecoder().decode(ArtistResponse.self, from: data)
-                userCompletionHandler(artist)
-            } catch {
-                print("Error decoding artist: \(error)")
-                userCompletionHandler(nil)
-            }
-        }.resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.badStatusCode(code)
+        }
+
+        return try JSONDecoder().decode(ArtistResponse.self, from: data)
     }
 
-    func getAlbum(id: String, userCompletionHandler: @escaping (AlbumResponse?) -> Void) {
+    func getAlbum(id: String) async throws -> AlbumResponse {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.spotify.com"
         components.path = "/v1/albums/\(id)"
 
-        guard let url = components.url else {
-            userCompletionHandler(nil)
-            return
-        }
+        guard let url = components.url else { throw URLError(.badURL) }
 
-        let requestHeaders: [String: String] = ["Authorization": "\(tokenType) \(accessToken)"]
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.allHTTPHeaderFields = requestHeaders
+        request.allHTTPHeaderFields = ["Authorization": "\(tokenType) \(accessToken)"]
 
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            guard let data = data, error == nil else {
-                userCompletionHandler(nil)
-                return
-            }
-            do {
-                let album = try JSONDecoder().decode(AlbumResponse.self, from: data)
-                userCompletionHandler(album)
-            } catch {
-                print("Error decoding album: \(error)")
-                userCompletionHandler(nil)
-            }
-        }.resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NetworkError.badStatusCode(code)
+        }
+
+        return try JSONDecoder().decode(AlbumResponse.self, from: data)
     }
 }
