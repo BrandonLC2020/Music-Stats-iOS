@@ -150,38 +150,34 @@ class UserTopItems: ObservableObject {
                 continue
             }
 
-            var albumToSongs: [String: [Song]] = [:]
+            var groupToSongs: [String: [Song]] = [:]
             for song in songs {
-                albumToSongs[song.album.id, default: []].append(song)
+                let normalizedName = normalizeAlbumName(song.album.name)
+                let primaryArtistId = song.artists.first?.spotifyId ?? "unknown"
+                let groupKey = "\(normalizedName)||\(primaryArtistId)"
+                groupToSongs[groupKey, default: []].append(song)
             }
 
-            let filteredAlbums = albumToSongs.filter { $1.count > 1 }
+            let filteredGroups = groupToSongs.values.filter { $0.count > 1 }
 
-            let sortedAlbumIds = filteredAlbums.keys.sorted { id1, id2 in
-                let songs1 = filteredAlbums[id1]!
-                let songs2 = filteredAlbums[id2]!
-
-                if songs1.count != songs2.count {
-                    return songs1.count > songs2.count
-                }
-
-                let bestRank1 = songs1.compactMap { $0.rank }.min() ?? Int.max
-                let bestRank2 = songs2.compactMap { $0.rank }.min() ?? Int.max
-
-                return bestRank1 < bestRank2
+            let sortedGroups = filteredGroups.sorted { songs1, songs2 in
+                let score1 = songs1.reduce(0) { $0 + (51 - ($1.rank ?? 51)) }
+                let score2 = songs2.reduce(0) { $0 + (51 - ($1.rank ?? 51)) }
+                return score1 > score2
             }
 
-            self.topAlbumsList[key] = sortedAlbumIds.enumerated().map { index, albumId in
-                let songs = filteredAlbums[albumId]!
-                let firstSong = songs[0]
+            self.topAlbumsList[key] = sortedGroups.enumerated().map { index, songs in
+                let representative = songs.min(by: { $0.album.name.count < $1.album.name.count })!
                 return Album(
-                    id: "\(key)-\(index + 1)-\(albumId)",
-                    spotifyId: albumId,
+                    id: "\(key)-\(index + 1)-\(representative.album.spotifyId ?? representative.album.id)",
+                    spotifyId: representative.album.spotifyId,
                     rank: index + 1,
-                    images: firstSong.album.images,
-                    name: firstSong.album.name,
-                    artists: firstSong.artists,
-                    releaseDate: firstSong.album.releaseDate
+                    images: representative.album.images,
+                    name: representative.album.name,
+                    artists: representative.artists,
+                    releaseDate: representative.album.releaseDate,
+                    totalTracks: representative.album.totalTracks,
+                    songCount: songs.count
                 )
             }
         }
@@ -325,5 +321,17 @@ extension UserTopItems {
         }
 
         return try JSONDecoder().decode(AlbumResponse.self, from: data)
+    }
+}
+
+// MARK: - Album Name Normalization
+
+extension UserTopItems {
+    private func normalizeAlbumName(_ name: String) -> String {
+        let pattern = #"\s*[(\[][^)\]]*?(?:deluxe|edition|remaster(?:ed)?|bonus|special|anniversary|expanded|platinum|collector|3am)[^)\]]*[)\]]"#
+        return name
+            .replacingOccurrences(of: pattern, with: "", options: [.regularExpression, .caseInsensitive])
+            .trimmingCharacters(in: .whitespaces)
+            .lowercased()
     }
 }
