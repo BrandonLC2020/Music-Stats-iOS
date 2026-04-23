@@ -49,9 +49,9 @@ The redirect URI registered in the Spotify Developer Dashboard must match `your_
 
 **Two observable objects drive the entire app:**
 
-- `AuthManager` — Handles OAuth2 authorization code flow with Spotify. Uses a `WKWebView` (in `AuthorizationView`) to run the web login, intercepts the redirect URI, exchanges the auth code for tokens, and persists the refresh token in the keychain via KeychainSwift. Re-hydrates session on launch by attempting a token refresh from the saved refresh token.
+- `AuthManager` — Handles OAuth2 authorization code flow with Spotify. Uses a `WKWebView` (in `AuthorizationView`) to run the web login, intercepts the redirect URI, exchanges the auth code for tokens, and persists the refresh token in the keychain via KeychainSwift. Re-hydrates session on launch by attempting a token refresh from the saved refresh token. Annotated `@MainActor`; async methods use `URLSession.data(for:)`.
 
-- `UserTopItems` — All data fetching and transformation. Calls the Spotify Web API (`/v1/me/top/tracks`, `/v1/me/top/artists`, individual detail endpoints) using `URLSession` with completion handlers and `DispatchGroup` for fan-out. Exposes `@Published` dictionaries keyed by time range (`"short"`, `"medium"`, `"long"`).
+- `UserTopItems` — All data fetching and transformation. Calls the Spotify Web API (`/v1/me/top/tracks`, `/v1/me/top/artists`, individual detail endpoints) using `URLSession.data(for:)` with `async/await`. Fan-out over three time ranges uses `async let`. Exposes `@Published` dictionaries keyed by time range (`"short"`, `"medium"`, `"long"`). Annotated `@MainActor`; all `@Published` writes are automatically thread-safe.
 
 **Data model layers:**
 - `Types/CodableTypes.swift` — `Codable` structs matching Spotify API JSON (snake_case mapped via `CodingKeys`).
@@ -61,7 +61,7 @@ The redirect URI registered in the Spotify Developer Dashboard must match `your_
 
 **Navigation:** `TabUIView` is the root; each tab uses a `NavigationStack` with `navigationDestination(item:)` to push detail views. `ProfileToolbarItem` provides the logout action.
 
-**Async pattern:** The codebase uses `URLSession` completion handlers + `DispatchGroup`, not `async/await` or Combine. UI updates are dispatched to `DispatchQueue.main.async`.
+**Async pattern:** `AuthManager` and `UserTopItems` are both `@MainActor` classes using Swift structured concurrency (`async/await`). Network I/O uses `URLSession.data(for:)`. Concurrent fan-out uses `async let`. Views use the `.task` modifier instead of `.onAppear`. `DispatchGroup` and `DispatchQueue.main.async` are not used in networking code.
 
 ## Key Files
 
@@ -74,4 +74,5 @@ The redirect URI registered in the Spotify Developer Dashboard must match `your_
 | `TabUIView.swift` | Root navigation; owns `UserTopItems`, triggers initial fetch |
 | `Types/CodableTypes.swift` | Spotify API response models |
 | `Types/IdentifiableTypes.swift` | UI-facing display models |
+| `Types/NetworkError.swift` | `NetworkError.badStatusCode(Int)` thrown by async fetch methods |
 | `Sample.xcconfig` | Template for required API credentials |
