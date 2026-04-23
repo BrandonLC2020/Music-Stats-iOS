@@ -1,6 +1,7 @@
 // SongDetailView.swift
 
 import SwiftUI
+import UIKit
 
 struct SongDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
@@ -61,6 +62,16 @@ struct SongDetailView: View {
                         }
                     }
                     .padding(.top, 10)
+
+                    Button("Open in Spotify") {
+                        if let url = URL(string: "https://open.spotify.com/track/\(spotifyId)") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(red: 0.114, green: 0.725, blue: 0.329))
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 8)
 
                     Spacer()
                 }
