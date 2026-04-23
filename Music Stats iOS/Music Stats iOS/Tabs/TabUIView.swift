@@ -36,12 +36,15 @@ struct TabUIView: View {
             }
         }
         .environmentObject(userTopItems)
-        .onAppear {
-            if let accessToken = authManager.accessToken, let tokenType = authManager.tokenType {
+        .task {
+            if let accessToken = authManager.accessToken,
+               let tokenType = authManager.tokenType {
                 userTopItems.accessToken = accessToken
                 userTopItems.tokenType = tokenType
-                userTopItems.getUserProfile {}
-                userTopItems.fetchAll()
+                async let profile: Void = userTopItems.getUserProfile()
+                async let data: Void = userTopItems.fetchAll()
+                await profile
+                await data
             }
         }
         .navigationBarBackButtonHidden(true)
