@@ -28,7 +28,6 @@ struct SongDetailView: View {
                     .padding(.top, 50)
             } else if let song = song {
                 VStack(alignment: .leading, spacing: 20) {
-                    // 1. Large Album Cover
                     AsyncImage(url: URL(string: song.album.images.first?.url ?? "")) { image in
                         image.resizable()
                             .scaledToFit()
@@ -42,19 +41,16 @@ struct SongDetailView: View {
                     .shadow(radius: 10)
                     .padding(.bottom, 10)
 
-                    // 2. Song Title
                     Text(song.name)
                         .font(.largeTitle)
                         .bold()
 
-                    // 3. Artist(s)
                     Text(artistsToString(artists: song.artists))
                         .font(.title2)
                         .foregroundColor(.secondary)
 
                     Divider()
 
-                    // 4. Details Section
                     VStack(alignment: .leading, spacing: 12) {
                         DetailRow(label: "Album", value: song.album.name)
                         DetailRow(label: "Release Date", value: song.album.releaseDate)
@@ -77,17 +73,13 @@ struct SongDetailView: View {
         }
         .navigationTitle("Song Details")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            fetchTrackDetails()
-        }
-    }
-
-    private func fetchTrackDetails() {
-        userTopItems.getTrack(id: spotifyId) { response in
-            DispatchQueue.main.async {
-                self.song = response
-                self.isLoading = false
+        .task {
+            do {
+                song = try await userTopItems.getTrack(id: spotifyId)
+            } catch {
+                // song remains nil; view shows "Failed to load track details."
             }
+            isLoading = false
         }
     }
 }

@@ -21,7 +21,6 @@ struct ArtistDetailView: View {
                     .padding(.top, 50)
             } else if let artist = artist {
                 VStack(alignment: .leading, spacing: 20) {
-                    // 1. Large Artist Image
                     AsyncImage(url: URL(string: artist.images?.first?.url ?? "")) { image in
                         image.resizable()
                             .scaledToFit()
@@ -35,14 +34,12 @@ struct ArtistDetailView: View {
                     .shadow(radius: 10)
                     .padding(.bottom, 10)
 
-                    // 2. Artist Name
                     Text(artist.name)
                         .font(.largeTitle)
                         .bold()
 
                     Divider()
 
-                    // 3. Details Section
                     VStack(alignment: .leading, spacing: 12) {
                         if let genres = artist.genres, !genres.isEmpty {
                             DetailRow(label: "Genres", value: genresToString(genres: genres))
@@ -67,17 +64,13 @@ struct ArtistDetailView: View {
         }
         .navigationTitle("Artist Details")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            fetchArtistDetails()
-        }
-    }
-
-    private func fetchArtistDetails() {
-        userTopItems.getArtist(id: spotifyId) { response in
-            DispatchQueue.main.async {
-                self.artist = response
-                self.isLoading = false
+        .task {
+            do {
+                artist = try await userTopItems.getArtist(id: spotifyId)
+            } catch {
+                // artist remains nil; view shows "Failed to load artist details."
             }
+            isLoading = false
         }
     }
 }
