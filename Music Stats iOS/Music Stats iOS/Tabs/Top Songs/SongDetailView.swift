@@ -68,7 +68,7 @@ struct SongDetailView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Color(red: 0.114, green: 0.725, blue: 0.329))
+                    .tint(Color.spotifyGreen)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
 
