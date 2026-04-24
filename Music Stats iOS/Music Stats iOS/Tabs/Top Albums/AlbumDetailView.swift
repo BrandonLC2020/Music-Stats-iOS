@@ -71,7 +71,7 @@ struct AlbumDetailView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Color.spotifyGreen)
+                    .tint(.spotifyGreen)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
 
