@@ -4,11 +4,9 @@ import SwiftUI
 
 struct AlbumDetailView: View {
     @EnvironmentObject var userTopItems: UserTopItems
-    let spotifyId: String
-    let rank: Int?
-    let songCount: Int?
+    let albumData: Album
 
-    @State private var album: AlbumResponse?
+    @State private var albumResponse: AlbumResponse?
     @State private var isLoading = true
 
     private func artistsToString(artists: [ArtistResponse]?) -> String {
@@ -20,9 +18,9 @@ struct AlbumDetailView: View {
             if isLoading {
                 ProgressView("Fetching Album Details...")
                     .padding(.top, 50)
-            } else if let album = album {
+            } else if let albumResponse = albumResponse {
                 VStack(alignment: .leading, spacing: 20) {
-                    AsyncImage(url: URL(string: album.images.first?.url ?? "")) { image in
+                    AsyncImage(url: URL(string: albumResponse.images.first?.url ?? "")) { image in
                         image.resizable()
                             .scaledToFit()
                     } placeholder: {
@@ -35,38 +33,38 @@ struct AlbumDetailView: View {
                     .shadow(radius: 10)
                     .padding(.bottom, 10)
 
-                    Text(album.name)
+                    Text(albumResponse.name)
                         .font(.largeTitle)
                         .bold()
 
-                    Text(artistsToString(artists: album.artists))
+                    Text(artistsToString(artists: albumResponse.artists))
                         .font(.title2)
                         .foregroundColor(.secondary)
 
                     Divider()
 
                     VStack(alignment: .leading, spacing: 12) {
-                        DetailRow(label: "Release Date", value: album.releaseDate)
-                        if let totalTracks = album.totalTracks {
+                        DetailRow(label: "Release Date", value: albumResponse.releaseDate)
+                        if let totalTracks = albumResponse.totalTracks {
                             DetailRow(label: "Total Tracks", value: "\(totalTracks)")
                         }
-                        if let label = album.label {
+                        if let label = albumResponse.label {
                             DetailRow(label: "Label", value: label)
                         }
-                        if let popularity = album.popularity {
+                        if let popularity = albumResponse.popularity {
                             DetailRow(label: "Popularity", value: "\(popularity)/100")
                         }
-                        if let songCount = songCount {
+                        if let songCount = albumData.songCount {
                             DetailRow(label: "Songs in Your Top 50", value: "\(songCount)")
                         }
-                        if let rank = rank {
+                        if let rank = albumData.rank {
                             DetailRow(label: "Rank", value: "#\(rank)")
                         }
                     }
                     .padding(.top, 10)
 
                     Button("Open in Spotify") {
-                        if let url = URL(string: "https://open.spotify.com/album/\(spotifyId)") {
+                        if let url = URL(string: "https://open.spotify.com/album/\(albumData.spotifyId ?? "")") {
                             UIApplication.shared.open(url)
                         }
                     }
@@ -88,9 +86,9 @@ struct AlbumDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
-                album = try await userTopItems.getAlbum(id: spotifyId)
+                albumResponse = try await userTopItems.getAlbum(id: albumData.spotifyId ?? "")
             } catch {
-                // album remains nil; view shows "Failed to load album details."
+                // albumResponse remains nil; view shows "Failed to load album details."
             }
             isLoading = false
         }
