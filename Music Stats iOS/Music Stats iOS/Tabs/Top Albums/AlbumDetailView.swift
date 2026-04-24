@@ -65,6 +65,16 @@ struct AlbumDetailView: View {
                     }
                     .padding(.top, 10)
 
+                    Button("Open in Spotify") {
+                        if let url = URL(string: "https://open.spotify.com/album/\(spotifyId)") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.spotifyGreen)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 8)
+
                     Spacer()
                 }
                 .padding()
