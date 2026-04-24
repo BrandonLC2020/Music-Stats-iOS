@@ -73,6 +73,22 @@ struct AlbumDetailView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
 
+                    if let contributingSongs = albumData.contributingSongs, !contributingSongs.isEmpty {
+                        VStack(alignment: .leading, spacing: 15) {
+                            Text("Top Songs from this Album")
+                                .font(.title2)
+                                .bold()
+                                .padding(.top, 20)
+
+                            ForEach(contributingSongs) { song in
+                                NavigationLink(destination: SongDetailView(spotifyId: song.spotifyId, rank: song.rank)) {
+                                    SongCard(song: song)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                    }
+
                     Spacer()
                 }
                 .padding()
