@@ -452,6 +452,17 @@ struct TopAlbumsCalculationTests {
         #expect(album?.id == "short-1-alb1")
     }
 
+    @Test("Album includes list of contributing top songs")
+    func albumIncludesContributingSongs() {
+        let sut = UserTopItems()
+        let s1 = makeSong(name: "Song 1", spotifyId: "s1", albumId: "alb1", albumName: "Album One", rank: 1)
+        let s2 = makeSong(name: "Song 2", spotifyId: "s2", albumId: "alb1", albumName: "Album One", rank: 2)
+        sut.topSongsList["short"] = [s1, s2]
+        sut.calculateTopAlbums()
+        let albums = sut.topAlbumsList["short"]
+        #expect(albums?.first?.contributingSongs?.count == 2)
+    }
+
     @Test("calculateTopAlbums is independent per time range")
     func independentPerTimeRange() {
         let sut = UserTopItems()

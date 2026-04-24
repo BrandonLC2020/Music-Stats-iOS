@@ -177,7 +177,8 @@ class UserTopItems: ObservableObject {
                     artists: representative.artists,
                     releaseDate: representative.album.releaseDate,
                     totalTracks: representative.album.totalTracks,
-                    songCount: songs.count
+                    songCount: songs.count,
+                    contributingSongs: songs
                 )
             }
         }
