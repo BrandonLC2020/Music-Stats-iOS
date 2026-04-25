@@ -31,6 +31,12 @@ struct TabUIView: View {
                         Image(systemName: "music.mic")
                         Text("Top Artists")
                     }
+
+                SettingsView()
+                    .tabItem {
+                        Image(systemName: "gearshape")
+                        Text("Settings")
+                    }
             } else {
                 ProgressView()
             }
