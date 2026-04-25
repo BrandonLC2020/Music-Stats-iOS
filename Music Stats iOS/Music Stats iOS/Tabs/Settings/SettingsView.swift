@@ -11,7 +11,7 @@ struct SettingsView: View {
                 Section("Account") {
                     if let profile = userTopItems.userProfile {
                         HStack {
-                            AsyncImage(url: URL(string: profile.images.first?.url ?? "")) { image in
+                            AsyncImage(url: URL(string: profile.images?.first?.url ?? "")) { image in
                                 image.resizable()
                             } placeholder: {
                                 Image(systemName: "person.circle.fill")
@@ -22,9 +22,9 @@ struct SettingsView: View {
                             .clipShape(Circle())
                             
                             VStack(alignment: .leading) {
-                                Text(profile.displayName)
+                                Text(profile.displayName ?? "Unknown User")
                                     .font(.headline)
-                                Text(profile.email)
+                                Text(profile.email ?? "No email provided")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }

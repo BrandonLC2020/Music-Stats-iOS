@@ -3,6 +3,7 @@
 import SwiftUI
 
 struct SongCard: View {
+    @Environment(\.cardBlur) var cardBlur
     var song: Song
 
     // This helper function is now more efficient and safer.
@@ -58,7 +59,7 @@ struct SongCard: View {
                     Color.clear
                 }
                 .scaledToFill()
-                .blur(radius: 5)
+                .blur(radius: cardBlur)
 
                 // Overlay
                 Rectangle()

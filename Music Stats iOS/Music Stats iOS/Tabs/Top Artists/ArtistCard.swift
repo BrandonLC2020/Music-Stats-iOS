@@ -3,6 +3,7 @@
 import SwiftUI
 
 struct ArtistCard: View {
+    @Environment(\.cardBlur) var cardBlur
     var artist: Artist
 
     var body: some View {
@@ -50,7 +51,7 @@ struct ArtistCard: View {
                     Color.clear
                 }
                 .scaledToFill()
-                .blur(radius: 5)
+                .blur(radius: cardBlur)
 
                 // Overlay
                 Rectangle()
