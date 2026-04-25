@@ -495,6 +495,17 @@ struct AuthManagerTests {
         #expect(sut.tokenType == nil)
         #expect(sut.isAuthenticated == false)
     }
+
+    @Test("getAuthorizationURL() generates a state and includes it in the URL")
+    func getAuthorizationURLGeneratesState() {
+        let sut = AuthManager()
+
+        let urlString = sut.getAuthorizationURL()
+
+        #expect(sut.authState != nil)
+        #expect(sut.authState?.count == 16)
+        #expect(urlString.contains("state=\(sut.authState!)"))
+    }
 }
 
 // MARK: - Album Ranking Refinement Tests

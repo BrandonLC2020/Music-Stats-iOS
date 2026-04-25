@@ -13,6 +13,7 @@ class AuthManager: ObservableObject {
 
     @Published var isAuthenticated: Bool = false
     @Published var isLoading: Bool = true
+    @Published var authState: String?
 
     var accessToken: String?
     var tokenType: String?
@@ -25,6 +26,43 @@ class AuthManager: ObservableObject {
         } else {
             isLoading = false
         }
+    }
+
+    func getAuthorizationURL() -> String {
+        let state = generateRandomString(length: 16)
+        self.authState = state
+
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "accounts.spotify.com"
+        components.path = "/authorize"
+        let spotifyClientID = Bundle.main.object(forInfoDictionaryKey: "SPOTIFY_API_CLIENT_ID") as? String
+        let redirectURIHost = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_HOST") as? String
+        let redirectURIScheme = Bundle.main.object(forInfoDictionaryKey: "REDIRECT_URI_SCHEME") as? String
+
+        let redirectURI = "\(redirectURIScheme ?? "")://\(redirectURIHost ?? "")"
+        let scope = "user-read-private user-read-email user-top-read"
+        let responseType = "code"
+
+        components.queryItems = [
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: scope),
+            URLQueryItem(name: "response_type", value: responseType),
+            URLQueryItem(name: "redirect_uri", value: redirectURI),
+            URLQueryItem(name: "client_id", value: spotifyClientID)
+        ]
+        return components.string ?? ""
+    }
+
+    private func generateRandomString(length: Int) -> String {
+        let byteCount = length / 2
+        var bytes = [UInt8](repeating: 0, count: byteCount)
+        let result = SecRandomCopyBytes(kSecRandomDefault, byteCount, &bytes)
+        guard result == errSecSuccess else {
+            return ""
+        }
+        let hexString = bytes.map { String(format: "%02x", $0) }.joined()
+        return hexString.padding(toLength: length, withPad: "0", startingAt: 0)
     }
 
     func logIn(with code: String) {

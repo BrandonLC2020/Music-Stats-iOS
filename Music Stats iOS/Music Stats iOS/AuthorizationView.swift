@@ -125,6 +125,20 @@ struct WebView: UIViewRepresentable {
                 guard let url = webView.url,
                       let code = self.parent.getCodeFromURL(urlString: url.absoluteString) else { return }
 
+                let returnedState = self.parent.getStateFromURL(urlString: url.absoluteString)
+
+                // --- STATE CHECK ---
+                // Verify the state returned by Spotify matches the one we sent.
+                let originalState = self.parent.authManager.authState
+                guard let originalState = originalState, returnedState == originalState else {
+                    print("State mismatch! Expected \(originalState ?? "nil"), but got \(returnedState ?? "nil"). Possible CSRF attack.")
+                    DispatchQueue.main.async {
+                        self.parent.showWebView = false
+                        self.urlObserver?.invalidate()
+                    }
+                    return
+                }
+
                 DispatchQueue.main.async {
                     self.parent.authManager.logIn(with: code)
                     self.parent.showWebView = false
@@ -152,9 +166,8 @@ struct AuthorizationView: View {
 
     @EnvironmentObject var authManager: AuthManager
 
-    // 1
     @State var showWebView: Bool = false
-    var urlString: String
+    @State private var authURL: String?
     @State var code: String = ""
 
     var body: some View {
@@ -166,18 +179,25 @@ struct AuthorizationView: View {
                     .scaledToFill()
                     .frame(width: 200, height: 200)
                 Button("Authorize") {
+                    // Generate fresh URL and state each time we start a new auth session
+                    authURL = authManager.getAuthorizationURL()
                     showWebView = true
                 }
                 .padding(10)
                 .sheet(isPresented: $showWebView) {
-                    WebView(url: URL(string: urlString)!, code: $code, showWebView: $showWebView)
-                        .environmentObject(authManager)
+                    if let urlString = authURL, let url = URL(string: urlString) {
+                        WebView(url: url, code: $code, showWebView: $showWebView)
+                            .environmentObject(authManager)
+                    } else {
+                        ProgressView()
+                    }
                 }
             }
         }
     }
 }
+
 #Preview {
-    AuthorizationView(urlString: "https://accounts.spotify.com/authorize")
+    AuthorizationView()
         .environmentObject(AuthManager())
 }

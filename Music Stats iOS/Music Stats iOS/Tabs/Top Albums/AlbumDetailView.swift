@@ -63,9 +63,14 @@ struct AlbumDetailView: View {
                     }
                     .padding(.top, 10)
 
-                    Button("Open in Spotify") {
+                    Button {
                         if let url = URL(string: "https://open.spotify.com/album/\(albumData.spotifyId ?? "")") {
                             UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.up.forward.app")
+                            Text("Open in Spotify")
                         }
                     }
                     .buttonStyle(.borderedProminent)
@@ -80,11 +85,13 @@ struct AlbumDetailView: View {
                                 .bold()
                                 .padding(.top, 20)
 
-                            ForEach(contributingSongs) { song in
-                                NavigationLink(destination: SongDetailView(spotifyId: song.spotifyId, rank: song.rank)) {
-                                    SongCard(song: song)
+                            LazyVStack(spacing: 12) {
+                                ForEach(contributingSongs) { song in
+                                    NavigationLink(destination: SongDetailView(spotifyId: song.spotifyId, rank: song.rank)) {
+                                        SongCard(song: song)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                     }
