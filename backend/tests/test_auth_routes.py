@@ -31,10 +31,10 @@ def test_login_returns_401_on_invalid_token():
     assert response.status_code == 401
 
 
-def test_login_returns_500_on_dynamo_error():
+def test_login_returns_500_on_firestore_error():
     mock_claims = {"sub": "auth0|abc123", "email": "user@example.com", "name": "Test User"}
     with patch("app.routes.auth.verify_token", return_value=mock_claims), \
-         patch("app.routes.auth.upsert_user", side_effect=Exception("DynamoDB down")):
+         patch("app.routes.auth.upsert_user", side_effect=Exception("Firestore down")):
         response = client.post(
             "/auth/login",
             headers={"Authorization": "Bearer valid.jwt.token"},

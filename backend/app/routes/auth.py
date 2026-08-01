@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.auth0_client import verify_token
-from app.dynamo import upsert_user
+from app.firestore_client import upsert_user
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth")
